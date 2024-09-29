@@ -76,7 +76,7 @@ public class Main extends Application {
                 border.setStrokeWidth(BORDER_WIDTH);
                 
                 // Füge den Listener für den Mausklick hinzu
-                final int currentRow = row; // Nur für den print, weil Variablen in Lambda final sein müssen
+                final int currentRow = row; // Nur für das MouseEvent, weil Variablen in Lambda final sein müssen
                 final int currentCol = col; 
                 
                 if (isPlayerGrid) {

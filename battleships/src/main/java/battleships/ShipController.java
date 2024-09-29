@@ -15,7 +15,7 @@ public class ShipController {
     // Methode zum Starten der Platzierung eines Schiffs
     @FXML
     private void startShipPlacement() {
-        // Platzierungslogik hier (ähnlich wie in deinem bisherigen Code)
+        // Platzierungslogik hier 
         System.out.println("Start placing ship...");
     }
 
