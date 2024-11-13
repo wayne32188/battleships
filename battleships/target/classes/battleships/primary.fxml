@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="battleships.PrimaryController">
-   <children>
-      <Label text="Primary View" />
-      <Button fx:id="primaryButton" text="Switch to Secondary View" onAction="#switchToSecondary"/>
-   </children>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="battleships.ShipController">
+    <HBox spacing="20">
+        <GridPane fx:id="playerGrid"/>
+        <GridPane fx:id="enemyGrid"/>
+    </HBox>
+    <HBox spacing="10">
+        <Button text="Button 1" onAction="#handleButton1"/>
+        <Button text="Button 2" onAction="#handleButton2"/>
+        <Button text="Button 3" onAction="#handleButton3"/>
+    </HBox>
 </VBox>
