@@ -6,6 +6,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -23,7 +24,9 @@ public class Main extends Application {
     private static final int GRID_SIZE = 10;
     private static final int CELL_SIZE = 50;
     private static final int BORDER_WIDTH = 1;
-    private static final int SHIP_SIZE = 3; // Beispielgröße für ein Schiff
+    private static final int SHIP_SIZE = 5; // Beispielgröße für ein Schiff
+
+    private boolean isVertical = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -48,6 +51,12 @@ public class Main extends Application {
 
         // Erstelle die Szene
         Scene scene = new Scene(vbox, GRID_SIZE * CELL_SIZE * 2 + 100, GRID_SIZE * CELL_SIZE + 150); // Platz für 2 Grids und das Schiff
+
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.R) { // Drücke "R", um die Richtung zu ändern
+                isVertical = !isVertical;
+            }
+        });
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drag-and-Drop Schiffe auf einem 10x10 Grid");
         primaryStage.show();
@@ -66,25 +75,50 @@ public class Main extends Application {
                 border.setStroke(Color.BLACK);
                 border.setStrokeWidth(BORDER_WIDTH);
 
-                // Erstelle das OnDragOver-Ereignis für die Zellen
-                cell.setOnDragOver(event -> {
-                    if (event.getGestureSource() != cell && event.getDragboard().hasString()) {
-                        event.acceptTransferModes(TransferMode.MOVE);
-                    }
-                    event.consume();
-                });
+                if (isPlayerGrid) {
+                    // Erstelle das OnDragOver-Ereignis für die Zellen
+                    cell.setOnDragOver(event -> {
+                        if (event.getGestureSource() != cell && event.getDragboard().hasString()) {
+                            event.acceptTransferModes(TransferMode.MOVE);
+                        }
+                        event.consume();
+                    });
 
-                // Erstelle das OnDragDropped-Ereignis für die Zellen
-                cell.setOnDragDropped(event -> {
-                    Dragboard db = event.getDragboard();
-                    boolean success = false;
-                    if (db.hasString()) {
-                        border.setFill(Color.LIGHTBLUE); // Zeige an, dass das Schiff platziert wurde
-                        success = true;
-                    }
-                    event.setDropCompleted(success);
-                    event.consume();
-                });
+                    // Erstelle das OnDragDropped-Ereignis für die Zellen
+                    cell.setOnDragDropped(event -> {
+                        Dragboard db = event.getDragboard();
+                        boolean success = false;
+
+                        if (db.hasString()) {
+                            // Finde die Position der aktuellen Zelle
+                            int cellCol = GridPane.getColumnIndex(cell);
+                            int cellRow = GridPane.getRowIndex(cell);
+
+                            // Überprüfe, ob das Schiff innerhalb des Rasters passt
+                            boolean shipFitsInGrid = isVertical
+                                    ? (cellRow + SHIP_SIZE <= GRID_SIZE) // Prüfe vertikale Platzierung
+                                    : (cellCol + SHIP_SIZE <= GRID_SIZE); // Prüfe horizontale Platzierung
+
+                            if (shipFitsInGrid) {
+                                success = true;
+
+                                // Setze das Schiff auf die nächsten SHIP_SIZE Zellen
+                                for (int i = 0; i < SHIP_SIZE; i++) {
+                                    StackPane targetCell = isVertical
+                                            ? (StackPane) gridPane.getChildren().get(((cellRow + i) * GRID_SIZE) - cellCol) // Vertikale Platzierung
+                                            : (StackPane) gridPane.getChildren().get((cellRow * GRID_SIZE) + (cellCol - i)); // Horizontale Platzierung
+
+                                    Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
+                                    targetBorder.setFill(Color.DARKGREEN);
+                                }
+                            }
+                        }
+
+                        event.setDropCompleted(success);
+                        event.consume();
+                    });
+
+                }
 
                 // Füge das Rectangle zum StackPane hinzu
                 cell.getChildren().add(border);
@@ -101,6 +135,7 @@ public class Main extends Application {
 
         // Drag-and-Drop-Ereignis für das Schiff
         ship.setOnDragDetected(event -> {
+            ship.setMouseTransparent(true); // Verhindert, dass das Schiff die Maus blockiert
             Dragboard db = ship.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
             content.putString("Ship"); // Platzhalter, damit etwas übertragen wird
@@ -108,11 +143,31 @@ public class Main extends Application {
             event.consume();
         });
 
+        ship.setOnMouseMoved(event -> {
+            ship.setX(event.getSceneX() - ship.getWidth() / 2);
+            ship.setY(event.getSceneY() - ship.getHeight() / 2);
+        });
+
         ship.setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
                 ship.setVisible(false); // Schiff verschwindet, wenn es platziert wurde
             }
+            ship.setMouseTransparent(false); // Mausinteraktionen wieder aktivieren
             event.consume();
+        });
+
+        // Umschalten der Ausrichtung durch Taste "R"
+        ship.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.R) { // Rotation bei "R"
+                isVertical = !isVertical;
+                if (isVertical) {
+                    ship.setWidth(CELL_SIZE);
+                    ship.setHeight(CELL_SIZE * size);
+                } else {
+                    ship.setWidth(CELL_SIZE * size);
+                    ship.setHeight(CELL_SIZE);
+                }
+            }
         });
 
         return ship;
