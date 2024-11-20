@@ -52,6 +52,26 @@ public class Main extends Application {
         // Erstelle die Szene
         Scene scene = new Scene(vbox, GRID_SIZE * CELL_SIZE * 2 + 100, GRID_SIZE * CELL_SIZE + 150); // Platz für 2 Grids und das Schiff
 
+        // Bewegung des Schiffs mit der Maus verbinden
+        scene.setOnMouseMoved(event -> {
+            ship.setX(event.getSceneX() - ship.getWidth() / 2);
+            ship.setY(event.getSceneY() - ship.getHeight() / 2);
+        });
+
+        // Rotation durch Taste "R"
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.R) {
+                isVertical = !isVertical;
+                if (isVertical) {
+                    ship.setWidth(CELL_SIZE);
+                    ship.setHeight(CELL_SIZE * SHIP_SIZE);
+                } else {
+                    ship.setWidth(CELL_SIZE * SHIP_SIZE);
+                    ship.setHeight(CELL_SIZE);
+                }
+            }
+        });
+
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.R) { // Drücke "R", um die Richtung zu ändern
                 isVertical = !isVertical;
@@ -155,21 +175,6 @@ public class Main extends Application {
             ship.setMouseTransparent(false); // Mausinteraktionen wieder aktivieren
             event.consume();
         });
-
-        // Umschalten der Ausrichtung durch Taste "R"
-        ship.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.R) { // Rotation bei "R"
-                isVertical = !isVertical;
-                if (isVertical) {
-                    ship.setWidth(CELL_SIZE);
-                    ship.setHeight(CELL_SIZE * size);
-                } else {
-                    ship.setWidth(CELL_SIZE * size);
-                    ship.setHeight(CELL_SIZE);
-                }
-            }
-        });
-
         return ship;
     }
 
