@@ -18,10 +18,4 @@ public class ShipController {
         // Platzierungslogik hier 
         System.out.println("Start placing ship...");
     }
-
-
-    private void placeShipAt(int row, int col) {
-
-        System.out.println("Placing ship at: " + row + ", " + col);
-    }
 }
