@@ -2,6 +2,7 @@ package battleships;
 
 import java.util.ArrayList;
 
+import battleships.lib.Helper;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -18,7 +19,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-
 /**
  * JavaFX App mit Drag-and-Drop-Schiffen
  */
@@ -28,6 +28,8 @@ public class Main extends Application {
     private static final int CELL_SIZE = 50;
     private static final int BORDER_WIDTH = 1;
     private boolean isVertical = false;
+
+    Helper helper = new Helper();
     ArrayList<Ship> ships = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -46,18 +48,16 @@ public class Main extends Application {
         ships.add(new Ship(4, false));
         ships.add(new Ship(5, false));
 
-
         Button resetButton = new Button("Schiffe zurücksetzen");
-        
+
         // Visuelle Darstellung der Schiffe erstellen
         VBox shipsBox = new VBox(10); // 10px Abstand zwischen den Schiffen
         for (Ship ship : ships) {
             Rectangle shipRectangle = ship.createShip(CELL_SIZE, isVertical);
             shipsBox.getChildren().add(shipRectangle);
         }
-        
+
         resetButton.setOnAction(event -> { resetAllShips(playerField); });
-        
 
         // Erstelle eine HBox, um die Grids und die Schiffe nebeneinander anzuordnen
         HBox gridsBox = new HBox(20); // 20px Abstand zwischen den Grids
@@ -67,7 +67,6 @@ public class Main extends Application {
         VBox vbox = new VBox(10); // 10px Abstand zwischen den Grids und der Schiff-Box
         vbox.getChildren().addAll(gridsBox, shipsBox, resetButton);
 
-        
         // Erstelle die Szene
         Scene scene = new Scene(vbox, GRID_SIZE * CELL_SIZE * 2 + 100, GRID_SIZE * CELL_SIZE + 150);
 
@@ -80,8 +79,6 @@ public class Main extends Application {
                 }
             }
         });
-
-
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drag-and-Drop Schiffe auf einem 10x10 Grid");
@@ -122,10 +119,17 @@ public class Main extends Application {
                             int cellCol = GridPane.getColumnIndex(cell);
                             int cellRow = GridPane.getRowIndex(cell);
 
-                            // Überprüfe, ob das Schiff innerhalb des Rasters passt
-                            boolean shipFitsInGrid = isVertical
-                                    ? (cellRow + selectedShipSize <= GRID_SIZE) // Prüfe vertikale Platzierung
-                                    : (cellCol + selectedShipSize <= GRID_SIZE); // Prüfe horizontale Platzierung
+                             // Überprüfe, ob das Schiff innerhalb des Rasters passt
+
+                             boolean shipFitsInGrid = helper.doesShipFit(
+                                isVertical ? cellRow : cellCol, 
+                                selectedShipSize, 
+                                GRID_SIZE, 
+                                isVertical
+                            );
+
+                            System.out.print("\n");
+                            System.out.print("Passt das Schiff: " + shipFitsInGrid);
 
                             if (shipFitsInGrid) {
                                 success = true;
@@ -133,7 +137,7 @@ public class Main extends Application {
                                 // Setze das Schiff auf die nächsten SHIP_SIZE Zellen
                                 for (int i = 0; i < selectedShipSize; i++) {
                                     StackPane targetCell = isVertical
-                                            ? (StackPane) gridPane.getChildren().get(((cellRow + i) * GRID_SIZE) - cellCol) // Vertikale Platzierung
+                                            ? (StackPane) gridPane.getChildren().get(((cellRow + i) * GRID_SIZE) + cellCol) // Vertikale Platzierung
                                             : (StackPane) gridPane.getChildren().get((cellRow * GRID_SIZE) + (cellCol - i)); // Horizontale Platzierung
 
                                     Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
@@ -171,7 +175,7 @@ public class Main extends Application {
             for (int col = 0; col < GRID_SIZE; col++) {
                 int cellIndex = row * GRID_SIZE + col;
                 StackPane cell = (StackPane) playerField.getChildren().get(cellIndex);
-    
+
                 // Überprüfe die Farbe der Zelle
                 Rectangle border = (Rectangle) cell.getChildren().get(0);
                 if (border.getFill().equals(Color.DARKGREEN)) {
@@ -180,16 +184,12 @@ public class Main extends Application {
                 }
             }
         }
-    
+
         // Alle Schiffe wieder sichtbar machen und Startpositionen zurücksetzen
         for (Ship ship : ships) {
             ship.getShipVisuals().setVisible(true); // Sichtbarkeit wiederherstellen
         }
     }
-    
-    
-    
-    
 
     // Hilfsmethode zum Anzeigen einer Nachricht
     @SuppressWarnings("unused")

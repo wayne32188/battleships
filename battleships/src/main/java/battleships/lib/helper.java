@@ -1,8 +1,20 @@
 package battleships.lib;
 
-public class helper {
+public class Helper {
 
-    public static boolean doesShipFit(int cell, int SHIP_SIZE, int GRID_SIZE) {
-        return cell + SHIP_SIZE <= GRID_SIZE;
+    public boolean doesShipFit(int cellColOrRow, int ship_size, int grid_size, boolean isVertical) {
+
+        return isVertical
+                ? doesVerticalShipFit(cellColOrRow, ship_size, grid_size)
+                : doesHorizontalShipFit(cellColOrRow, ship_size, grid_size);
+
+    }
+
+    private boolean doesHorizontalShipFit(int cellCol, int ship_size, int grid_size) {
+        return cellCol >= (ship_size - 1);
+    }
+
+    private boolean doesVerticalShipFit(int cellRow, int shipSize, int gridSize) {
+        return (cellRow + (shipSize - 1)) <= gridSize;
     }
 }
