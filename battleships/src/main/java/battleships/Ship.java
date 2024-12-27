@@ -31,6 +31,7 @@ public class Ship {
         return startCol;
     }
 
+    @SuppressWarnings("exports")
     public Rectangle getShipVisuals() {
         return shipVisuals;
     }

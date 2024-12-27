@@ -6,11 +6,11 @@ public class Helper {
 
         return isVertical
                 ? doesVerticalShipFit(cellColOrRow, ship_size, grid_size)
-                : doesHorizontalShipFit(cellColOrRow, ship_size, grid_size);
+                : doesHorizontalShipFit(cellColOrRow, ship_size);
 
     }
 
-    private boolean doesHorizontalShipFit(int cellCol, int ship_size, int grid_size) {
+    private boolean doesHorizontalShipFit(int cellCol, int ship_size) {
         return cellCol >= (ship_size - 1);
     }
 
