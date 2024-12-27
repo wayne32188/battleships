@@ -1,12 +1,15 @@
 package battleships;
 
 import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -14,7 +17,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.scene.input.TransferMode;
 
 
 /**
@@ -39,17 +41,23 @@ public class Main extends Application {
         GridPane playerField = createPlayerField();
         GridPane enemyField = createEnemyField();
 
-        // Schiffe erstellen
-        ships.add(new Ship(3, false)); // Beispiel-Schiff mit Größe 3
-        ships.add(new Ship(4, false)); // Beispiel-Schiff mit Größe 4
+        // Schiffe erstellen mit Größe 3, 4, 5 
+        ships.add(new Ship(3, false));
+        ships.add(new Ship(4, false));
         ships.add(new Ship(5, false));
 
+
+        Button resetButton = new Button("Schiffe zurücksetzen");
+        
         // Visuelle Darstellung der Schiffe erstellen
         VBox shipsBox = new VBox(10); // 10px Abstand zwischen den Schiffen
         for (Ship ship : ships) {
             Rectangle shipRectangle = ship.createShip(CELL_SIZE, isVertical);
             shipsBox.getChildren().add(shipRectangle);
         }
+        
+        resetButton.setOnAction(event -> { resetAllShips(playerField); });
+        
 
         // Erstelle eine HBox, um die Grids und die Schiffe nebeneinander anzuordnen
         HBox gridsBox = new HBox(20); // 20px Abstand zwischen den Grids
@@ -57,8 +65,9 @@ public class Main extends Application {
 
         // Erstelle eine VBox, um die Grids und die Schiffe untereinander anzuordnen
         VBox vbox = new VBox(10); // 10px Abstand zwischen den Grids und der Schiff-Box
-        vbox.getChildren().addAll(gridsBox, shipsBox);
+        vbox.getChildren().addAll(gridsBox, shipsBox, resetButton);
 
+        
         // Erstelle die Szene
         Scene scene = new Scene(vbox, GRID_SIZE * CELL_SIZE * 2 + 100, GRID_SIZE * CELL_SIZE + 150);
 
@@ -72,13 +81,15 @@ public class Main extends Application {
             }
         });
 
+
+
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drag-and-Drop Schiffe auf einem 10x10 Grid");
         primaryStage.show();
     }
 
     // Methode zur Erstellung eines GridPane
-    private GridPane createGridPane(boolean isPlayerGrid, ArrayList<Ship> ships) {
+    private GridPane createGridPane(boolean isPlayerGrid) {
         GridPane gridPane = new GridPane();
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
@@ -147,13 +158,38 @@ public class Main extends Application {
 
     // Dummy Methode zum Erstellen des Spielerfelds
     private GridPane createPlayerField() {
-        return createGridPane(true, ships);
+        return createGridPane(true);
     }
 
     // Dummy Methode zum Erstellen des Gegnerfelds
     private GridPane createEnemyField() {
-        return createGridPane(false, ships);
+        return createGridPane(false);
     }
+
+    private void resetAllShips(GridPane playerField) {
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                int cellIndex = row * GRID_SIZE + col;
+                StackPane cell = (StackPane) playerField.getChildren().get(cellIndex);
+    
+                // Überprüfe die Farbe der Zelle
+                Rectangle border = (Rectangle) cell.getChildren().get(0);
+                if (border.getFill().equals(Color.DARKGREEN)) {
+                    // Setze die Zellenfarbe zurück auf TRANSPARENT
+                    border.setFill(Color.TRANSPARENT);
+                }
+            }
+        }
+    
+        // Alle Schiffe wieder sichtbar machen und Startpositionen zurücksetzen
+        for (Ship ship : ships) {
+            ship.getShipVisuals().setVisible(true); // Sichtbarkeit wiederherstellen
+        }
+    }
+    
+    
+    
+    
 
     // Hilfsmethode zum Anzeigen einer Nachricht
     @SuppressWarnings("unused")

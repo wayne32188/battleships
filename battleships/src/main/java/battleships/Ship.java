@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Ship {
+
     private final int SHIP_SIZE;
     private int startRow;
     private int startCol;
@@ -30,13 +31,18 @@ public class Ship {
         return startCol;
     }
 
+    public Rectangle getShipVisuals() {
+        return shipVisuals;
+    }
+
     public void setStartRow(int row) {
         this.startRow = row;
     }
 
-    public void setStartCol (int col) {
+    public void setStartCol(int col) {
         this.startCol = col;
     }
+
 
     public boolean isVertical() {
         return isVertical;
@@ -45,7 +51,7 @@ public class Ship {
     /**
      * Erstellt die visuelle Darstellung des Schiffs als Rectangle.
      *
-     * @param cellSize   Die Größe einer Zelle im Grid.
+     * @param cellSize Die Größe einer Zelle im Grid.
      * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal ist.
      * @return Das erstellte Rectangle-Objekt.
      */
@@ -80,13 +86,16 @@ public class Ship {
     }
 
     /**
-     * Aktualisiert die Ausrichtung des Schiffs und passt die visuelle Darstellung an.
+     * Aktualisiert die Ausrichtung des Schiffs und passt die visuelle
+     * Darstellung an.
      *
-     * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal sein soll.
+     * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal sein
+     * soll.
      */
     public void updateOrientation(boolean isVertical) {
+        this.isVertical = isVertical;
         if (shipVisuals != null) {
-            if (isVertical) {
+            if (this.isVertical) {
                 shipVisuals.setWidth(50);
                 shipVisuals.setHeight(50 * SHIP_SIZE); // Vertikale Ausrichtung
             } else {
@@ -95,5 +104,5 @@ public class Ship {
             }
         }
     }
-    
+
 }
