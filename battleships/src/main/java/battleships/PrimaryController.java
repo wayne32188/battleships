@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
-public class ShipController {
+public class PrimaryController {
 
     @FXML
     private GridPane gridPane; // Die Referenz auf das GridPane aus der FXML-Datei

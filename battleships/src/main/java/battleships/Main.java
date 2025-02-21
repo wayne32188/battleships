@@ -1,74 +1,45 @@
 package battleships;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import battleships.lib.Helper;
+import static battleships.lib.Helper.doesShipFit;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-/**
- * JavaFX App mit Drag-and-Drop-Schiffen
- */
 public class Main extends Application {
 
-    private static final int GRID_SIZE = 10;
-    private static final int CELL_SIZE = 50;
-    private static final int BORDER_WIDTH = 1;
-    private boolean isVertical = false;
+    public static final int GRID_SIZE = 10;
+    public static final int CELL_SIZE = 50;
+    public static final int BORDER_WIDTH = 1;
+    private static boolean isVertical = false;
+    private static Scene scene;
 
-    Helper helper = new Helper();
     ArrayList<Ship> ships = new ArrayList<>();
 
     public static void main(String[] args) {
         launch(args);
     }
 
+    @SuppressWarnings("unused")
+    public static void setRoot(String fxml) throws IOException {
+        scene.setRoot(loadFXML(fxml));
+    }
+
     @Override
-    public void start(@SuppressWarnings("exports") Stage primaryStage) {
-        // Erstelle zwei GridPane-Instanzen für Spieler und Gegner
-        // Spieler darf mit eigenem Feld direkt interagieren aber nicht mit Gegnerfeld
-        GridPane playerField = createPlayerField();
-        GridPane enemyField = createEnemyField();
-
-        // Schiffe erstellen mit Größe 3, 4, 5 
-        ships.add(new Ship(3, false));
-        ships.add(new Ship(4, false));
-        ships.add(new Ship(5, false));
-
-        Button resetButton = new Button("Schiffe zurücksetzen");
-
-        // Visuelle Darstellung der Schiffe erstellen
-        VBox shipsBox = new VBox(10); // 10px Abstand zwischen den Schiffen
-        for (Ship ship : ships) {
-            Rectangle shipRectangle = ship.createShip(CELL_SIZE, isVertical);
-            shipsBox.getChildren().add(shipRectangle);
-        }
-
-        resetButton.setOnAction(event -> { resetAllShips(playerField); });
-
-        // Erstelle eine HBox, um die Grids und die Schiffe nebeneinander anzuordnen
-        HBox gridsBox = new HBox(20); // 20px Abstand zwischen den Grids
-        gridsBox.getChildren().addAll(playerField, enemyField);
-
-        // Erstelle eine VBox, um die Grids und die Schiffe untereinander anzuordnen
-        VBox vbox = new VBox(10); // 10px Abstand zwischen den Grids und der Schiff-Box
-        vbox.getChildren().addAll(gridsBox, shipsBox, resetButton);
-
+    public void start(@SuppressWarnings("exports") Stage primaryStage) throws IOException {
         // Erstelle die Szene
-        Scene scene = new Scene(vbox, GRID_SIZE * CELL_SIZE * 2 + 100, GRID_SIZE * CELL_SIZE + 150);
+        scene = new Scene(loadFXML("secondary"));
 
         // Rotation durch Taste "R"
         scene.setOnKeyPressed(event -> {
@@ -85,8 +56,13 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    // Methode zur Erstellung eines GridPane
-    private GridPane createGridPane(boolean isPlayerGrid) {
+    private static Parent loadFXML(String fxml) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"));
+        return (Parent) fxmlLoader.load();
+    }
+
+    @SuppressWarnings("exports")
+    public static GridPane createGridPane(boolean isPlayerGrid) {
         GridPane gridPane = new GridPane();
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
@@ -119,13 +95,12 @@ public class Main extends Application {
                             int cellCol = GridPane.getColumnIndex(cell);
                             int cellRow = GridPane.getRowIndex(cell);
 
-                             // Überprüfe, ob das Schiff innerhalb des Rasters passt
-
-                             boolean shipFitsInGrid = helper.doesShipFit(
-                                isVertical ? cellRow : cellCol, 
-                                selectedShipSize, 
-                                GRID_SIZE, 
-                                isVertical
+                            // Überprüfe, ob das Schiff innerhalb des Rasters passt
+                            boolean shipFitsInGrid = doesShipFit(
+                                    isVertical ? cellRow : cellCol,
+                                    selectedShipSize,
+                                    GRID_SIZE,
+                                    isVertical
                             );
 
                             System.out.print("\n");
@@ -158,46 +133,5 @@ public class Main extends Application {
             }
         }
         return gridPane;
-    }
-
-    // Dummy Methode zum Erstellen des Spielerfelds
-    private GridPane createPlayerField() {
-        return createGridPane(true);
-    }
-
-    // Dummy Methode zum Erstellen des Gegnerfelds
-    private GridPane createEnemyField() {
-        return createGridPane(false);
-    }
-
-    private void resetAllShips(GridPane playerField) {
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                int cellIndex = row * GRID_SIZE + col;
-                StackPane cell = (StackPane) playerField.getChildren().get(cellIndex);
-
-                // Überprüfe die Farbe der Zelle
-                Rectangle border = (Rectangle) cell.getChildren().get(0);
-                if (border.getFill().equals(Color.DARKGREEN)) {
-                    // Setze die Zellenfarbe zurück auf TRANSPARENT
-                    border.setFill(Color.TRANSPARENT);
-                }
-            }
-        }
-
-        // Alle Schiffe wieder sichtbar machen und Startpositionen zurücksetzen
-        for (Ship ship : ships) {
-            ship.getShipVisuals().setVisible(true); // Sichtbarkeit wiederherstellen
-        }
-    }
-
-    // Hilfsmethode zum Anzeigen einer Nachricht
-    @SuppressWarnings("unused")
-    private void showMessage(String message) {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Information");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
