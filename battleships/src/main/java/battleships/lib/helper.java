@@ -13,6 +13,6 @@ public class Helper {
     }
 
     private static boolean doesVerticalShipFit(int cellRow, int shipSize, int gridSize) {
-        return (cellRow + (shipSize - 1)) <= gridSize;
+        return (cellRow + shipSize) <= gridSize;
     }
 }

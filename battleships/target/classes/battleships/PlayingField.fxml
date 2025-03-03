@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="battleships.SecondaryController">
+    <HBox spacing="10">
+        <Button text="Button 1"/>
+        <Button text="Button 2"/>
+        <Button text="Button 3"/>
+    </HBox>
+</VBox>

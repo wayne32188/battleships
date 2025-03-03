@@ -4,15 +4,17 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
-<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="battleships.SecondaryController">
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="battleships.ShipPlacementController">
     <HBox fx:id="gridBox" spacing="20">
         <GridPane fx:id="playerField"/>
         <GridPane fx:id="enemyField"/>
     </HBox>
     <VBox spacing="10">
+        <Text fx:id="orientationHint" />
         <VBox fx:id="shipsBox" spacing="10"/>
         <Button fx:id="resetButton" text="Schiffe zurücksetzen"/>
-        <Button fx:id="openSecondaryButton" text="Neues Fenster öffnen"/>
+        <Button fx:id="openSecondaryButton" text="Neues Fenster öffnen" onAction="#switchToSecondary"/>
     </VBox>
 </VBox>

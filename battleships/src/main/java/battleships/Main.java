@@ -17,13 +17,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+
 public class Main extends Application {
 
     public static final int GRID_SIZE = 10;
     public static final int CELL_SIZE = 50;
     public static final int BORDER_WIDTH = 1;
-    private static boolean isVertical = false;
+    public static boolean isVertical = false;
     private static Scene scene;
+    private ShipPlacementController shipPlacementController;
 
     ArrayList<Ship> ships = new ArrayList<>();
 
@@ -31,20 +33,24 @@ public class Main extends Application {
         launch(args);
     }
 
-    @SuppressWarnings("unused")
-    public static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
-    }
+
 
     @Override
-    public void start(@SuppressWarnings("exports") Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) throws IOException {
         // Erstelle die Szene
-        scene = new Scene(loadFXML("secondary"));
+
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ShipPlacement" + ".fxml"));
+        Parent root = fxmlLoader.load();
+        scene = new Scene(root);
+        shipPlacementController = fxmlLoader.getController();
+
 
         // Rotation durch Taste "R"
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.R) {
                 isVertical = !isVertical;
+                shipPlacementController.setOrientationText(isVertical);
+                System.out.println("Rotation: " + (isVertical ? "Vertikal" : "Horizontal"));
                 for (Ship ship : ships) {
                     ship.updateOrientation(isVertical); // Schiffe visuell aktualisieren
                 }
@@ -56,12 +62,15 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    public static void setRoot(String fxml) throws IOException {
+        scene.setRoot(loadFXML(fxml));
+    }
+
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"));
         return (Parent) fxmlLoader.load();
     }
 
-    @SuppressWarnings("exports")
     public static GridPane createGridPane(boolean isPlayerGrid) {
         GridPane gridPane = new GridPane();
         for (int row = 0; row < GRID_SIZE; row++) {

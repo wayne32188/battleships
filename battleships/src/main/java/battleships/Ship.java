@@ -31,7 +31,6 @@ public class Ship {
         return startCol;
     }
 
-    @SuppressWarnings("exports")
     public Rectangle getShipVisuals() {
         return shipVisuals;
     }
@@ -56,7 +55,6 @@ public class Ship {
      * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal ist.
      * @return Das erstellte Rectangle-Objekt.
      */
-    @SuppressWarnings("exports")
     public Rectangle createShip(int cellSize, boolean isVertical) {
         shipVisuals = new Rectangle(
                 isVertical ? cellSize : cellSize * SHIP_SIZE,
