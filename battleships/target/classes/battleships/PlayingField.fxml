@@ -7,7 +7,7 @@
 
 <VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="battleships.SecondaryController">
     <HBox spacing="10">
-        <Button text="Button 1"/>
+        <Button text="Button 1" onAction="#buttonHandler"/>
         <Button text="Button 2"/>
         <Button text="Button 3"/>
     </HBox>
