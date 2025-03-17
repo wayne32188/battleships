@@ -6,6 +6,10 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="battleships.SecondaryController">
+    <HBox fx:id="playingGridBox" spacing="20">
+        <GridPane fx:id="playerPlayingField"/>
+        <GridPane fx:id="enemyPlayingField"/>
+    </HBox>
     <HBox spacing="10">
         <Button text="Button 1" onAction="#buttonHandler"/>
         <Button text="Button 2"/>

@@ -9,8 +9,7 @@ import javafx.scene.shape.Rectangle;
 public class Ship {
 
     private final int SHIP_SIZE;
-    private int startRow;
-    private int startCol;
+    private int[] positionOnGrid;
     private boolean isVertical;
     private Rectangle shipVisuals;
 
@@ -23,24 +22,16 @@ public class Ship {
         return SHIP_SIZE;
     }
 
-    public int getStartRow() {
-        return startRow;
-    }
-
-    public int getStartCol() {
-        return startCol;
-    }
-
     public Rectangle getShipVisuals() {
         return shipVisuals;
     }
 
-    public void setStartRow(int row) {
-        this.startRow = row;
+    public void setPosition(int[] positionOnGrid) {
+        this.positionOnGrid = positionOnGrid;
     }
 
-    public void setStartCol(int col) {
-        this.startCol = col;
+    public int[] getPosition() {
+        return positionOnGrid;
     }
 
 
@@ -88,8 +79,7 @@ public class Ship {
      * Aktualisiert die Ausrichtung des Schiffs und passt die visuelle
      * Darstellung an.
      *
-     * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal sein
-     * soll.
+     * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal sein soll.
      */
     public void updateOrientation(boolean isVertical) {
         this.isVertical = isVertical;

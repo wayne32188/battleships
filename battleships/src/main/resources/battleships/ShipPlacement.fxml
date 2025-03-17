@@ -14,7 +14,7 @@
     <VBox spacing="10">
         <Text fx:id="orientationHint" />
         <VBox fx:id="shipsBox" spacing="10"/>
-        <Button fx:id="resetButton" text="Schiffe zurücksetzen"/>
-        <Button fx:id="openSecondaryButton" text="Neues Fenster öffnen" onAction="#switchToSecondary"/>
+        <Button fx:id="resetButton" text="Schiffe zurücksetzen" onAction="#resetAllShips"/>
+        <Button fx:id="openSecondaryButton" text="Starte Spiel" onAction="#startGame"/>
     </VBox>
 </VBox>

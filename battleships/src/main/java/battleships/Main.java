@@ -2,6 +2,7 @@ package battleships;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static battleships.lib.Helper.doesShipFit;
 import javafx.application.Application;
@@ -17,7 +18,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-
 public class Main extends Application {
 
     public static final int GRID_SIZE = 10;
@@ -25,7 +25,7 @@ public class Main extends Application {
     public static final int BORDER_WIDTH = 1;
     public static boolean isVertical = false;
     private static Scene scene;
-    private ShipPlacementController shipPlacementController;
+    
 
     ArrayList<Ship> ships = new ArrayList<>();
 
@@ -33,17 +33,14 @@ public class Main extends Application {
         launch(args);
     }
 
-
-
     @Override
     public void start(Stage primaryStage) throws IOException {
         // Erstelle die Szene
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ShipPlacement" + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ShipPlacement.fxml"));
         Parent root = fxmlLoader.load();
         scene = new Scene(root);
-        shipPlacementController = fxmlLoader.getController();
-
+        ShipPlacementController shipPlacementController = fxmlLoader.getController();
 
         // Rotation durch Taste "R"
         scene.setOnKeyPressed(event -> {
@@ -71,7 +68,7 @@ public class Main extends Application {
         return (Parent) fxmlLoader.load();
     }
 
-    public static GridPane createGridPane(boolean isPlayerGrid) {
+    public static GridPane createGridPane(boolean isPlayerGrid, ArrayList<Ship> ships) {
         GridPane gridPane = new GridPane();
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
@@ -95,11 +92,13 @@ public class Main extends Application {
                     // Erstelle das OnDragDropped-Ereignis für die Zellen
                     cell.setOnDragDropped(event -> {
                         Dragboard db = event.getDragboard();
-                        // Schiffgröße vom String zurück zum Integer umwandeln
-                        int selectedShipSize = Integer.parseInt(db.getString());
                         boolean success = false;
 
                         if (db.hasString()) {
+
+                            // Schiffgröße vom String zurück zum Integer umwandeln
+                            int selectedShipSize = Integer.parseInt(db.getString());
+                            
                             // Finde die Position der aktuellen Zelle
                             int cellCol = GridPane.getColumnIndex(cell);
                             int cellRow = GridPane.getRowIndex(cell);
@@ -125,13 +124,22 @@ public class Main extends Application {
                                             : (StackPane) gridPane.getChildren().get((cellRow * GRID_SIZE) + (cellCol - i)); // Horizontale Platzierung
 
                                     Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
-                                    targetBorder.setFill(Color.DARKGREEN);
+                                    targetBorder.setFill(Color.rgb(0, 100, 0, 0.5)); // Dunkelgrün mit 50% Transparenz
+                                }
+                                // Speichere die Position des Schiffs
+                                int[] positionOnGrid = new int[]{cellRow, cellCol};
+                                for (Ship ship : ships) {
+                                    if (ship.getSize() == selectedShipSize) {
+                                        ship.setPosition(positionOnGrid);
+                                        System.out.print(Arrays.toString(ship.getPosition()));
+                                        break;
+                                    }
                                 }
                             }
-                        }
 
-                        event.setDropCompleted(success);
-                        event.consume();
+                            event.setDropCompleted(success);
+                            event.consume();
+                        }
                     });
 
                 }
@@ -143,4 +151,5 @@ public class Main extends Application {
         }
         return gridPane;
     }
+
 }
