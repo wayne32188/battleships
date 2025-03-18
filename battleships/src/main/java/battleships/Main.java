@@ -130,6 +130,7 @@ public class Main extends Application {
                                 int[] positionOnGrid = new int[]{cellRow, cellCol};
                                 for (Ship ship : ships) {
                                     if (ship.getSize() == selectedShipSize) {
+                                        ship.setOrientation(isVertical);
                                         ship.setPosition(positionOnGrid);
                                         System.out.print(Arrays.toString(ship.getPosition()));
                                         break;

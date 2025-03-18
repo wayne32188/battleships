@@ -42,55 +42,44 @@ public class SecondaryController {
 
     public static GridPane createGameGrid(boolean isPlayerGrid, ArrayList<Ship> ships) {
         GridPane gridPane = new GridPane();
-    
+        StackPane[][] cells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE]; // 2D-Array für einfacheren Zugriff
+
+        // Erstelle das Grid mit leeren Zellen
         for (int row = 0; row < Main.GRID_SIZE; row++) {
             for (int col = 0; col < Main.GRID_SIZE; col++) {
                 StackPane cell = new StackPane();
-    
-                // Erstelle ein Rechteck für die Zelle
+
                 Rectangle border = new Rectangle(Main.CELL_SIZE, Main.CELL_SIZE);
                 border.setFill(Color.TRANSPARENT);
                 border.setStroke(Color.BLACK);
                 border.setStrokeWidth(Main.BORDER_WIDTH);
-    
-                // Falls es das Spielerfeld ist, Schiffe anzeigen
-                if (isPlayerGrid) {
-                    for (Ship ship : ships) {
-                        int[] shipPositionOnGrid = ship.getPosition();
-                        if (shipPositionOnGrid != null && shipPositionOnGrid.length == 2) {
-                            int shipRow = shipPositionOnGrid[0]; // Startzeile
-                            int shipCol = shipPositionOnGrid[1]; // Startspalte
-    
-                            // Prüfen, ob die aktuelle Zelle Teil eines Schiffs ist
-                            boolean isPartOfShip = false;
-                            for (int i = 0; i < ship.getSize(); i++) {
-                                if (ship.isVertical()) { 
-                                    if (row == shipRow + i && col == shipCol) {
-                                        isPartOfShip = true;
-                                        break;
-                                    }
-                                } else { 
-                                    if (row == shipRow && col == shipCol + i) {
-                                        isPartOfShip = true;
-                                        break;
-                                    }
-                                }
-                            }
-    
-                            // Wenn die Zelle zu einem Schiff gehört, färbe sie ein
-                            if (isPartOfShip) {
-                                border.setFill(Color.rgb(0, 100, 0, 1)); // Dunkelgrün
-                            }
-                        }
-                    }
-                }
-    
-                // Füge das Rechteck zum StackPane hinzu
+
                 cell.getChildren().add(border);
                 gridPane.add(cell, col, row);
+
+                cells[row][col] = cell; // Speichert die Zelle im 2D-Array
             }
         }
+
+        // Falls es das Spielerfeld ist, Schiffe einzeichnen
+        if (isPlayerGrid) {
+            for (Ship ship : ships) {
+                int[] shipPositionOnGrid = ship.getPosition();
+                int cellRow = shipPositionOnGrid[0]; // Start-Zeile
+                int cellCol = shipPositionOnGrid[1]; // Start-Spalte
+
+                for (int i = 0; i < ship.getSize(); i++) {
+                    StackPane targetCell = ship.isVertical()
+                            ? (StackPane) gridPane.getChildren().get(((cellRow + i) * Main.GRID_SIZE) + cellCol)
+                            : (StackPane) gridPane.getChildren().get((cellRow * Main.GRID_SIZE) + (cellCol - i));
+
+                    Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
+                    targetBorder.setFill(Color.rgb(0, 100, 0, 1)); // Dunkelgrün mit 100% Transparenz
+                }
+            }
+        }
+
         return gridPane;
     }
-    
+
 }

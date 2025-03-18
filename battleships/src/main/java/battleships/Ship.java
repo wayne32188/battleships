@@ -34,6 +34,9 @@ public class Ship {
         return positionOnGrid;
     }
 
+    public void setOrientation(boolean isVertical) {
+        this.isVertical = isVertical;
+    }
 
     public boolean isVertical() {
         return isVertical;
