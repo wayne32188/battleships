@@ -42,44 +42,38 @@ public class SecondaryController {
 
     public static GridPane createGameGrid(boolean isPlayerGrid, ArrayList<Ship> ships) {
         GridPane gridPane = new GridPane();
-        StackPane[][] cells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE]; // 2D-Array für einfacheren Zugriff
-
-        // Erstelle das Grid mit leeren Zellen
+        StackPane[][] cells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
+    
         for (int row = 0; row < Main.GRID_SIZE; row++) {
             for (int col = 0; col < Main.GRID_SIZE; col++) {
-                StackPane cell = new StackPane();
-
-                Rectangle border = new Rectangle(Main.CELL_SIZE, Main.CELL_SIZE);
-                border.setFill(Color.TRANSPARENT);
-                border.setStroke(Color.BLACK);
-                border.setStrokeWidth(Main.BORDER_WIDTH);
-
-                cell.getChildren().add(border);
+                StackPane cell = ShipPlacementController.createCell();
                 gridPane.add(cell, col, row);
-
-                cells[row][col] = cell; // Speichert die Zelle im 2D-Array
+                cells[row][col] = cell;
             }
         }
-
-        // Falls es das Spielerfeld ist, Schiffe einzeichnen
+    
         if (isPlayerGrid) {
-            for (Ship ship : ships) {
-                int[] shipPositionOnGrid = ship.getPosition();
-                int cellRow = shipPositionOnGrid[0]; // Start-Zeile
-                int cellCol = shipPositionOnGrid[1]; // Start-Spalte
-
-                for (int i = 0; i < ship.getSize(); i++) {
-                    StackPane targetCell = ship.isVertical()
-                            ? (StackPane) gridPane.getChildren().get(((cellRow + i) * Main.GRID_SIZE) + cellCol)
-                            : (StackPane) gridPane.getChildren().get((cellRow * Main.GRID_SIZE) + (cellCol - i));
-
-                    Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
-                    targetBorder.setFill(Color.rgb(0, 100, 0, 1)); // Dunkelgrün mit 100% Transparenz
-                }
+            drawShips(gridPane, ships);
+        }
+    
+        return gridPane;
+    }
+    
+    private static void drawShips(GridPane gridPane, ArrayList<Ship> ships) {
+        for (Ship ship : ships) {
+            int[] shipPositionOnGrid = ship.getPosition();
+            int cellRow = shipPositionOnGrid[0];
+            int cellCol = shipPositionOnGrid[1];
+    
+            for (int i = 0; i < ship.getSize(); i++) {
+                StackPane targetCell = ship.isVertical()
+                        ? (StackPane) gridPane.getChildren().get(((cellRow + i) * Main.GRID_SIZE) + cellCol)
+                        : (StackPane) gridPane.getChildren().get((cellRow * Main.GRID_SIZE) + (cellCol - i));
+    
+                Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
+                targetBorder.setFill(Color.rgb(0, 100, 0, 1));
             }
         }
-
-        return gridPane;
     }
 
 }

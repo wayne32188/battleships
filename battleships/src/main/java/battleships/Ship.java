@@ -30,10 +30,13 @@ public class Ship {
         this.positionOnGrid = positionOnGrid;
     }
 
+    /**@return Index 0 = cellRow; 1 = cellCol
+     */
     public int[] getPosition() {
         return positionOnGrid;
     }
 
+    /** <p> Hehe */
     public void setOrientation(boolean isVertical) {
         this.isVertical = isVertical;
     }
