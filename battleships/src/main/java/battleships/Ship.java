@@ -1,5 +1,8 @@
 package battleships;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -12,6 +15,8 @@ public class Ship {
     private int[] positionOnGrid;
     private boolean isVertical;
     private Rectangle shipVisuals;
+    private boolean isDestroyed = false;
+    private final List<int[]> hitCells = new ArrayList<>(); // Liste für getroffene Zellen
 
     public Ship(int SIZE, boolean isVertical) {
         this.SHIP_SIZE = SIZE;
@@ -30,19 +35,59 @@ public class Ship {
         this.positionOnGrid = positionOnGrid;
     }
 
-    /**@return Index 0 = cellRow; 1 = cellCol
+    /**
+     * @return Index 0 = cellRow; 1 = cellCol
      */
     public int[] getPosition() {
         return positionOnGrid;
     }
 
-    /** <p> Hehe */
+
     public void setOrientation(boolean isVertical) {
         this.isVertical = isVertical;
     }
 
+
     public boolean isVertical() {
         return isVertical;
+    }
+
+
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
+    
+
+    public boolean isHit(int row, int col) {
+        int shipRow = positionOnGrid[0];
+        int shipCol = positionOnGrid[1];
+
+        for (int i = 0; i < SHIP_SIZE; i++) {
+            int occupiedRow = isVertical ? shipRow + i : shipRow;
+            int occupiedCol = isVertical ? shipCol : shipCol + i;
+
+            if (row == occupiedRow && col == occupiedCol) {
+                // Überprüfen, ob die Zelle bereits getroffen wurde
+                for (int[] hitCell : hitCells) {
+                    if (hitCell[0] == row && hitCell[1] == col) {
+                        return false; // Zelle wurde bereits getroffen
+                    }
+                }
+
+                // Zelle als getroffen markieren
+                hitCells.add(new int[]{row, col});
+                System.out.println("Schiff getroffen bei (" + row + ", " + col + ")");
+
+                // Überprüfen, ob das Schiff zerstört ist
+                if (hitCells.size() == SHIP_SIZE) {
+                    isDestroyed = true;
+                    System.out.println("Schiff zerstört!");
+                }
+
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -85,7 +130,8 @@ public class Ship {
      * Aktualisiert die Ausrichtung des Schiffs und passt die visuelle
      * Darstellung an.
      *
-     * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal sein soll.
+     * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal sein
+     * soll.
      */
     public void updateOrientation(boolean isVertical) {
         this.isVertical = isVertical;

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.fxml.FXML;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -23,16 +24,92 @@ public class SecondaryController {
 
     @FXML
     private void initialize() {
-        playerPlayingField = createGameGrid(true, ShipPlacementController.getShips());
-        enemyPlayingField = createGameGrid(false, null);
 
         ArrayList<Ship> ships = ShipPlacementController.getShips();
 
-        System.out.println(java.util.Arrays.toString(ships.get(1).getPosition()));
+        playerPlayingField = createGameGrid(true, ships);
+        enemyPlayingField = createGameGrid(false, null);
 
         playingGridBox.getChildren().addAll(playerPlayingField, enemyPlayingField);
 
         System.out.println("SecondaryController initialized");
+
+        GameHandler gameHandler = new GameHandler(playerPlayingField, enemyPlayingField);
+    }
+
+
+    public static GridPane createGameGrid(boolean isPlayerGrid, ArrayList<Ship> ships) {
+        GridPane gridPane = new GridPane();
+        StackPane[][] cells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
+
+        for (int row = 0; row < Main.GRID_SIZE; row++) {
+            for (int col = 0; col < Main.GRID_SIZE; col++) {
+                StackPane cell = createClickableCell(row, col);
+                gridPane.add(cell, col, row);
+                cells[row][col] = cell;
+            }
+        }
+
+        if (isPlayerGrid) {
+            drawShips(gridPane, ships);
+        }
+
+        return gridPane;
+    }
+
+    private static StackPane createClickableCell(int row, int col) {
+        StackPane cell = ShipPlacementController.createCell();
+        addMouseClickEvent(cell, row, col);
+        return cell;
+    }
+
+
+    private static void addMouseClickEvent(StackPane cell, int row, int col) {
+        cell.setOnMouseClicked((MouseEvent event) -> {
+            System.out.println("Zelle (" + row + ", " + col + ") wurde ausgewählt");
+    
+            Rectangle border = getCellBorder(cell);
+            if (border != null) {
+                // Überprüfen, ob die Zelle Teil eines Schiffs ist
+                for (Ship ship : ShipPlacementController.getShips()) {
+                    if (ship.isHit(row, col)) {
+                        // Zelle ist Teil eines Schiffs und wurde getroffen
+                        border.setFill(Color.RED); // Markiere die Zelle rot
+                        System.out.println("Schiff getroffen!");
+                        return;
+                    }
+                }
+    
+                // Wenn die Zelle kein Teil eines Schiffs ist, markiere sie grün oder transparent
+                border.setFill(border.getFill() == Color.LIGHTGREEN ? Color.TRANSPARENT : Color.LIGHTGREEN);
+            }
+        });
+    }
+
+
+    private static Rectangle getCellBorder(StackPane cell) {
+        return (Rectangle) cell.getChildren().stream()
+                .filter(node -> node instanceof Rectangle)
+                .findFirst()
+                .orElse(null);
+    }
+
+
+    private static void drawShips(GridPane gridPane, ArrayList<Ship> ships) {
+        for (Ship ship : ships) {
+            int[] shipPositionOnGrid = ship.getPosition();
+            int cellRow = shipPositionOnGrid[0];
+            int cellCol = shipPositionOnGrid[1];
+
+            for (int i = 0; i < ship.getSize(); i++) {
+                StackPane targetCell = ship.isVertical()
+                        ? (StackPane) gridPane.getChildren().get(((cellRow + i) * Main.GRID_SIZE) + cellCol)
+                        : (StackPane) gridPane.getChildren().get((cellRow * Main.GRID_SIZE) + (cellCol - i));
+
+                Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
+                targetBorder.setFill(Color.rgb(0, 100, 0, 1));
+            }
+        }
     }
 
     @FXML
@@ -40,40 +117,5 @@ public class SecondaryController {
         Main.setRoot("ShipPlacement");
     }
 
-    public static GridPane createGameGrid(boolean isPlayerGrid, ArrayList<Ship> ships) {
-        GridPane gridPane = new GridPane();
-        StackPane[][] cells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
-    
-        for (int row = 0; row < Main.GRID_SIZE; row++) {
-            for (int col = 0; col < Main.GRID_SIZE; col++) {
-                StackPane cell = ShipPlacementController.createCell();
-                gridPane.add(cell, col, row);
-                cells[row][col] = cell;
-            }
-        }
-    
-        if (isPlayerGrid) {
-            drawShips(gridPane, ships);
-        }
-    
-        return gridPane;
-    }
-    
-    private static void drawShips(GridPane gridPane, ArrayList<Ship> ships) {
-        for (Ship ship : ships) {
-            int[] shipPositionOnGrid = ship.getPosition();
-            int cellRow = shipPositionOnGrid[0];
-            int cellCol = shipPositionOnGrid[1];
-    
-            for (int i = 0; i < ship.getSize(); i++) {
-                StackPane targetCell = ship.isVertical()
-                        ? (StackPane) gridPane.getChildren().get(((cellRow + i) * Main.GRID_SIZE) + cellCol)
-                        : (StackPane) gridPane.getChildren().get((cellRow * Main.GRID_SIZE) + (cellCol - i));
-    
-                Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
-                targetBorder.setFill(Color.rgb(0, 100, 0, 1));
-            }
-        }
-    }
 
 }
