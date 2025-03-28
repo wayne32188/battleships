@@ -1,22 +1,27 @@
 package battleships;
 
-import javafx.scene.layout.GridPane;
-
 public class GameHandler {
 
-    private boolean isGameOver = false;
+    private boolean gameIsRunning = false;
+    private boolean isHostTurn = true;
 
-    GameHandler (GridPane playerField, GridPane enemyField) {
-        System.out.println("GameHandler initialized");
+    GameHandler(boolean isNpcEnemy) {
+        while (isRunning()) {
+            if (!isNpcEnemy) {
+            }
+        }
     }
 
-    public boolean isGameOver() {
-        return isGameOver;
+    private boolean isRunning() {
+        return gameIsRunning;
     }
 
-    public void setGameOver(boolean isGameOver) {
-        this.isGameOver = isGameOver;
+    public void setGameIsRunning(boolean gameIsRunning) {
+        this.gameIsRunning = gameIsRunning;
     }
 
+    public boolean isHostTurn() {
+        return isHostTurn;
+    }
 
 }

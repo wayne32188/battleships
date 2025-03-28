@@ -43,7 +43,7 @@ public class Ship {
     }
 
 
-    public void setOrientation(boolean isVertical) {
+    public void setRotation(boolean isVertical) {
         this.isVertical = isVertical;
     }
 
@@ -133,7 +133,7 @@ public class Ship {
      * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal sein
      * soll.
      */
-    public void updateOrientation(boolean isVertical) {
+    public void updatedRotation(boolean isVertical) {
         this.isVertical = isVertical;
         if (shipVisuals != null) {
             if (this.isVertical) {

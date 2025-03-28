@@ -3,6 +3,7 @@ package battleships;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,9 +13,12 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    public static final int GRID_SIZE = 10;
-    public static final int CELL_SIZE = 50;
-    public static final int BORDER_WIDTH = 1;
+    private static final Dotenv dotenv = Dotenv.load();
+
+    public static final int GRID_SIZE = Integer.parseInt(dotenv.get("GRID_SIZE"));
+    public static final int CELL_SIZE = Integer.parseInt(dotenv.get("CELL_SIZE"));
+    public static final int BORDER_WIDTH = Integer.parseInt(dotenv.get("BORDER_WIDTH"));
+    
     private static Scene scene;
     
 
@@ -37,10 +41,10 @@ public class Main extends Application {
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.R) {
                 ShipPlacementController.isVertical = !ShipPlacementController.isVertical;
-                shipPlacementController.setOrientationText(ShipPlacementController.isVertical);
+                shipPlacementController.setRotationText(ShipPlacementController.isVertical);
                 System.out.println("Rotation: " + (ShipPlacementController.isVertical ? "Vertikal" : "Horizontal"));
                 for (Ship ship : ships) {
-                    ship.updateOrientation(ShipPlacementController.isVertical); // Schiffe visuell aktualisieren
+                    ship.updatedRotation(ShipPlacementController.isVertical); // Schiffe visuell aktualisieren
                 }
             }
         });

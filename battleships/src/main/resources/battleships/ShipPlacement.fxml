@@ -12,7 +12,8 @@
         <GridPane fx:id="enemyField"/>
     </HBox>
     <VBox spacing="10">
-        <Text fx:id="orientationHint" />
+        <Text>Rotation mit Taste "R" ändern </Text>
+        <Text fx:id="rotationHint" />
         <VBox fx:id="shipsBox" spacing="10"/>
         <Button fx:id="resetButton" text="Schiffe zurücksetzen" onAction="#resetAllShips"/>
         <Button fx:id="openSecondaryButton" text="Starte Spiel" onAction="#startGame"/>

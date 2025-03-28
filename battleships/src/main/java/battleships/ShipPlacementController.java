@@ -5,6 +5,7 @@ import static battleships.lib.Helper.doesShipFit;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.fxml.FXML;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -32,9 +33,12 @@ public class ShipPlacementController {
     private HBox gridBox;
 
     @FXML
-    private Text orientationHint;
+    private Text rotationHint;
 
     private static final ArrayList<Ship> ships = new ArrayList<>();
+
+    private static final Dotenv dotenv = Dotenv.load();
+
 
     public static boolean isVertical = false;
 
@@ -46,7 +50,7 @@ public class ShipPlacementController {
         enemyField = createEnemyField();
 
         final boolean IS_VERTICAL = false;
-        setOrientationText(IS_VERTICAL);
+        setRotationText(IS_VERTICAL);
 
         gridBox.getChildren().addAll(playerField, enemyField);
 
@@ -77,11 +81,11 @@ public class ShipPlacementController {
         return createGridPane(false, null);
     }
 
-    protected void setOrientationText(boolean isVertical) {
+    protected void setRotationText(boolean isVertical) {
         if (isVertical) {
-            orientationHint.setText("Vertical");
+            rotationHint.setText("Vertical");
         } else {
-            orientationHint.setText("Horizontal");
+            rotationHint.setText("Horizontal");
         }
     }
 
@@ -146,10 +150,11 @@ public class ShipPlacementController {
     }
 
     public static StackPane createCell() {
+
         StackPane cell = new StackPane();
         Rectangle border = new Rectangle(Main.CELL_SIZE, Main.CELL_SIZE);
-        border.setFill(Color.TRANSPARENT);
-        border.setStroke(Color.BLACK);
+        border.setFill(Color.web(dotenv.get("CELL_BG_COLOR")));
+        border.setStroke(Color.web(dotenv.get("CELL_STROKE_COLOR")));
         border.setStrokeWidth(Main.BORDER_WIDTH);
         cell.getChildren().add(border);
         return cell;
@@ -207,7 +212,7 @@ public class ShipPlacementController {
         int[] positionOnGrid = new int[] { cellRow, cellCol };
         for (Ship ship : ships) {
             if (ship.getSize() == shipSize) {
-                ship.setOrientation(isVertical);
+                ship.setRotation(isVertical);
                 ship.setPosition(positionOnGrid);
                 break;
             }
