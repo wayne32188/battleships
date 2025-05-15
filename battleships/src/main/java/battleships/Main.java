@@ -49,6 +49,7 @@ public class Main extends Application {
             }
         });
 
+        
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drag-and-Drop Schiffe auf einem 10x10 Grid");
         primaryStage.show();

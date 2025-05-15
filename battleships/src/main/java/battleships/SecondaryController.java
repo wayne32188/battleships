@@ -23,6 +23,7 @@ public class SecondaryController {
     @FXML
     private HBox playingGridBox;
 
+    private boolean isHostTurn = true;
     private static GameHandler gameHandler;
 
     private static final Dotenv dotenv = Dotenv.load();
@@ -121,4 +122,11 @@ public class SecondaryController {
         Main.setRoot("ShipPlacement");
     }
 
+    public boolean getIsHostTurn() {
+        return isHostTurn;
+    }
+
+    public void setIsHostTurn(boolean isHostTurn) {
+        this.isHostTurn = isHostTurn;
+    }
 }

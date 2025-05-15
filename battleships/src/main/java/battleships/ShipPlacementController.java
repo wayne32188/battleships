@@ -39,8 +39,8 @@ public class ShipPlacementController {
 
     private static final Dotenv dotenv = Dotenv.load();
 
-
     public static boolean isVertical = false;
+    
 
     @FXML
     public void initialize() {
@@ -98,9 +98,9 @@ public class ShipPlacementController {
 
                 // Überprüfe die Farbe der Zelle
                 Rectangle border = (Rectangle) cell.getChildren().get(0);
-                if (!border.getFill().equals(Color.TRANSPARENT)) {
+                if (!border.getFill().equals(Color.web(dotenv.get("CELL_BG_COLOR")))) {
                     // Setze die Zellenfarbe zurück auf TRANSPARENT
-                    border.setFill(Color.TRANSPARENT);
+                    border.setFill(Color.web(dotenv.get("CELL_BG_COLOR")));
                 }
             }
         }
@@ -197,6 +197,7 @@ public class ShipPlacementController {
         }
     }
 
+    
     private static void placeShip(GridPane gridPane, int cellRow, int cellCol, int shipSize) {
         for (int i = 0; i < shipSize; i++) {
             StackPane targetCell = isVertical
