@@ -42,6 +42,7 @@ public class ShipPlacementController {
     private static final Dotenv dotenv = Dotenv.load();
 
     public static boolean isVertical = false;
+    
 
     @FXML
     public void initialize() {
@@ -201,6 +202,7 @@ public class ShipPlacementController {
         }
     }
 
+    
     private static void placeShip(GridPane gridPane, int cellRow, int cellCol, int shipSize) {
         for (int i = 0; i < shipSize; i++) {
             StackPane targetCell = isVertical
