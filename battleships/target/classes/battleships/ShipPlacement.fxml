@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="battleships.ShipPlacementController">
-    <HBox fx:id="gridBox" spacing="20">
-        <GridPane fx:id="playerField"/>
-        <GridPane fx:id="enemyField"/>
-    </HBox>
+<ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="battleships.ShipPlacementController"
+            fitToWidth="true" fitToHeight="true" pannable="true">
     <VBox spacing="10">
-        <Text>Rotation mit Taste "R" ändern </Text>
-        <Text fx:id="rotationHint" />
-        <VBox fx:id="shipsBox" spacing="10"/>
-        <Button fx:id="resetButton" text="Schiffe zurücksetzen" onAction="#resetAllShips"/>
-        <Button fx:id="openSecondaryButton" text="Starte Spiel" onAction="#startGame"/>
+        <HBox fx:id="gridBox" spacing="20">
+            <GridPane fx:id="playerField"/>
+            <GridPane fx:id="enemyField"/>
+        </HBox>
+        <VBox spacing="10">
+            <Text>Rotation mit Taste "R" ändern </Text>
+            <Text fx:id="rotationHint" />
+            <VBox fx:id="shipsBox" spacing="10"/>
+            <Button fx:id="resetButton" text="Schiffe zurücksetzen" onAction="#resetAllShips"/>
+            <Button fx:id="openSecondaryButton" text="Starte Spiel" onAction="#startGame"/>
+        </VBox>
     </VBox>
-</VBox>
+</ScrollPane>

@@ -76,11 +76,14 @@ public class SecondaryController {
             if (border != null) {
                 // Überprüfen, ob die Zelle Teil eines Schiffs ist
                 for (Ship ship : ShipPlacementController.getShips()) {
+                    
                     if (ship.isHit(row, col) && gameHandler.isHostTurn()) {
+
                         // Zelle ist Teil eines Schiffs und wurde getroffen
                         border.setFill(Color.web(dotenv.get("CELL_HIT_COLOR"))); // Markiere die Zelle rot
                         System.out.println("Schiff getroffen!");
                         return;
+
                     } else {
                         // Wenn die Zelle kein Teil eines Schiffs ist, markiere sie grün oder
                         // transparent

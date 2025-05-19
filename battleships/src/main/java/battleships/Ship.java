@@ -16,6 +16,7 @@ public class Ship {
     private boolean isVertical;
     private Rectangle shipVisuals;
     private boolean isDestroyed = false;
+    private boolean isHostShip = false;
     private final List<int[]> hitCells = new ArrayList<>(); // Liste für getroffene Zellen
 
     public Ship(int SIZE, boolean isVertical) {
@@ -56,6 +57,14 @@ public class Ship {
     public boolean isDestroyed() {
         return isDestroyed;
     }
+
+    public void setIsHostShip(boolean isHostShip) {
+        this.isHostShip = isHostShip;
+    }
+
+    public boolean getIsHostShip() {
+        return isHostShip;
+    }
     
 
     public boolean isHit(int row, int col) {
@@ -64,7 +73,7 @@ public class Ship {
 
         for (int i = 0; i < SHIP_SIZE; i++) {
             int occupiedRow = isVertical ? shipRow + i : shipRow;
-            int occupiedCol = isVertical ? shipCol : shipCol + i;
+            int occupiedCol = isVertical ? shipCol : shipCol - i;
 
             if (row == occupiedRow && col == occupiedCol) {
                 // Überprüfen, ob die Zelle bereits getroffen wurde

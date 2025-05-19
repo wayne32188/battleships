@@ -1,9 +1,11 @@
 package battleships;
 
 import static battleships.lib.Helper.doesShipFit;
+import static battleships.lib.Helper.isOverlapping;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.fxml.FXML;
@@ -38,7 +40,6 @@ public class ShipPlacementController {
     private static final ArrayList<Ship> ships = new ArrayList<>();
 
     private static final Dotenv dotenv = Dotenv.load();
-
 
     public static boolean isVertical = false;
 
@@ -98,9 +99,9 @@ public class ShipPlacementController {
 
                 // Überprüfe die Farbe der Zelle
                 Rectangle border = (Rectangle) cell.getChildren().get(0);
-                if (!border.getFill().equals(Color.TRANSPARENT)) {
-                    // Setze die Zellenfarbe zurück auf TRANSPARENT
-                    border.setFill(Color.TRANSPARENT);
+                if (!border.getFill().equals(Color.web(dotenv.get("CELL_BG_COLOR")))) {
+                    // Setze die Zellenfarbe zurück auf blau
+                    border.setFill(Color.web(dotenv.get("CELL_BG_COLOR")));
                 }
             }
         }
@@ -186,6 +187,9 @@ public class ShipPlacementController {
                     Main.GRID_SIZE,
                     isVertical);
 
+            System.out.println("Überlappen das Schiff?");
+            System.out.println(isOverlapping(cellCol, cellRow, selectedShipSize, isVertical, ships));
+            
             if (shipFitsInGrid) {
                 success = true;
                 placeShip(gridPane, cellRow, cellCol, selectedShipSize);
@@ -214,6 +218,8 @@ public class ShipPlacementController {
             if (ship.getSize() == shipSize) {
                 ship.setRotation(isVertical);
                 ship.setPosition(positionOnGrid);
+                System.out.println("Schiff gespeichert auf Koordinaten:");
+                System.out.println(Arrays.toString(positionOnGrid));
                 break;
             }
         }
