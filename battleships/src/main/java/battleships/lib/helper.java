@@ -20,33 +20,28 @@ public class Helper {
         return (cellRow + shipSize) <= gridSize;
     }
 
-    
-    public static boolean isOverlapping(int startRow, int startCol, int size, boolean isVertical,
-            ArrayList<Ship> ships) {
-        for (Ship ship : ships) {
-            int[] pos = ship.getPosition();
-            if (pos == null)
-                continue;
+    public static boolean isOverlapping(int cellRow, int cellCol, int shipSize, boolean isVertical,
+            ArrayList<int[]> occupiedCells) {
+        System.out.println("Occupied Cells:");
+        for (int[] coord : occupiedCells) {
+            System.out.println("(" + coord[0] + ", " + coord[1] + ")");
+        }
 
-            int shipRow = pos[0];
-            int shipCol = pos[1];
+        for (int i = 0; i < shipSize; i++) {
+            int row = isVertical ? cellRow + i : cellRow;
+            int col = isVertical ? cellCol : cellCol - i;
 
-            for (int i = 0; i < ship.getSize(); i++) {
-                int occupiedRow = ship.isVertical() ? shipRow + i : shipRow;
-                int occupiedCol = ship.isVertical() ? shipCol : shipCol - i;
+            System.out.println("Reihe + Spalte");
+            System.out.println("(" + row + "/" + col + ")");
 
-                for (int j = 0; j < size; j++) {
-                    int newRow = isVertical ? startRow + j : startRow;
-                    int newCol = isVertical ? startCol : startCol - j;
-
-                    if (newRow == occupiedRow && newCol == occupiedCol) {
-                        System.out.println("Schiff überlappt mit einem anderen!");
-                        return true;
-                    }
+            // Prüfen, ob diese Koordinate schon belegt ist
+            for (int[] coord : occupiedCells) {
+                if (coord[0] == row && coord[1] == col) {
+                    return true; // Überlappung gefunden
                 }
             }
         }
-        return false;
+        return false; // Keine Überlappung
     }
 
 }

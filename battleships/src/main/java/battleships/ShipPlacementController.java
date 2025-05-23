@@ -193,13 +193,16 @@ public class ShipPlacementController {
                     Main.GRID_SIZE,
                     isVertical);
 
-            System.out.println("Überlappen das Schiff?");
-            System.out.println(isOverlapping(cellCol, cellRow, selectedShipSize, isVertical, ships));
-
+            if (isOverlapping(cellRow, cellCol, selectedShipSize, isVertical, occupiedCells)) {
+                System.out.println("Das Schiff überlappt mit einem anderen!");
+                return;
+            }
             if (shipFitsInGrid) {
                 success = true;
                 placeShip(gridPane, cellRow, cellCol, selectedShipSize);
                 saveShipPosition(ships, selectedShipSize, cellRow, cellCol);
+            } else {
+                System.out.println("Das Schiff passt nicht ins Grid.");
             }
 
             event.setDropCompleted(success);
@@ -208,20 +211,19 @@ public class ShipPlacementController {
     }
 
     private static void placeShip(GridPane gridPane, int cellRow, int cellCol, int shipSize) {
-    for (int i = 0; i < shipSize; i++) {
-        int row = isVertical ? cellRow + i : cellRow;
-        int col = isVertical ? cellCol : cellCol - i;
+        for (int i = 0; i < shipSize; i++) {
+            int row = isVertical ? cellRow + i : cellRow;
+            int col = isVertical ? cellCol : cellCol - i;
 
-        // Koordinaten zur Liste hinzufügen
-        occupiedCells.add(new int[]{row, col});
+            // Koordinaten zur Liste hinzufügen
+            occupiedCells.add(new int[] { row, col });
 
-        // Zelle einfärben
-        StackPane targetCell = (StackPane) gridPane.getChildren().get((row * Main.GRID_SIZE) + col);
-        Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
-        targetBorder.setFill(Color.rgb(0, 100, 0, 0.5));
+            // Zelle einfärben
+            StackPane targetCell = (StackPane) gridPane.getChildren().get((row * Main.GRID_SIZE) + col);
+            Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
+            targetBorder.setFill(Color.rgb(0, 100, 0, 0.5));
+        }
     }
-}
-
 
     private static void saveShipPosition(ArrayList<Ship> ships, int shipSize, int cellRow, int cellCol) {
         int[] positionOnGrid = new int[] { cellRow, cellCol };
