@@ -26,22 +26,22 @@ public class SecondaryController {
     private boolean isHostTurn = true;
     private static GameHandler gameHandler;
 
-
     private static final Dotenv dotenv = Dotenv.load();
 
     @FXML
     private void initialize() {
 
-        ArrayList<Ship> ships = ShipPlacementController.getShips();
+        ArrayList<Ship> playerShips = ShipPlacementController.getShips();
 
-        playerPlayingField = createGameGrid(true, ships);
+        gameHandler = new GameHandler(true);
+
+        playerPlayingField = createGameGrid(true, playerShips);
         enemyPlayingField = createGameGrid(false, null);
 
         playingGridBox.getChildren().addAll(playerPlayingField, enemyPlayingField);
 
         System.out.println("SecondaryController initialized");
 
-        //gameHandler = new GameHandler(true);
     }
 
     public static GridPane createGameGrid(boolean isPlayerGrid, ArrayList<Ship> ships) {
@@ -77,8 +77,8 @@ public class SecondaryController {
             Rectangle border = getCellBorder(cell);
             if (border != null) {
                 // Überprüfen, ob die Zelle Teil eines Schiffs ist
-                for (Ship ship : ShipPlacementController.getShips()) {
-                    
+                for (Ship ship : gameHandler.npcEnemy.getShips()) {
+
                     if (ship.isHit(row, col) && gameHandler.isHostTurn()) {
 
                         // Zelle ist Teil eines Schiffs und wurde getroffen
@@ -118,7 +118,6 @@ public class SecondaryController {
                 Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
                 targetBorder.setFill(Color.rgb(0, 100, 0, 1));
 
-                
             }
         }
     }

@@ -22,17 +22,13 @@ public class Helper {
 
     public static boolean isOverlapping(int cellRow, int cellCol, int shipSize, boolean isVertical,
             ArrayList<int[]> occupiedCells) {
-        System.out.println("Occupied Cells:");
-        for (int[] coord : occupiedCells) {
-            System.out.println("(" + coord[0] + ", " + coord[1] + ")");
-        }
 
         for (int i = 0; i < shipSize; i++) {
             int row = isVertical ? cellRow + i : cellRow;
             int col = isVertical ? cellCol : cellCol - i;
 
-            System.out.println("Reihe + Spalte");
-            System.out.println("(" + row + "/" + col + ")");
+            //System.out.println("Reihe + Spalte");
+            //System.out.println("(" + row + "/" + col + ")");
 
             // Prüfen, ob diese Koordinate schon belegt ist
             for (int[] coord : occupiedCells) {
