@@ -38,11 +38,11 @@ public class ShipPlacementController {
     private Text rotationHint;
 
     private static final ArrayList<Ship> ships = new ArrayList<>();
+    public static ArrayList<int[]> occupiedCells = new ArrayList<>();
 
     private static final Dotenv dotenv = Dotenv.load();
 
     public static boolean isVertical = false;
-    
 
     @FXML
     public void initialize() {
@@ -71,6 +71,11 @@ public class ShipPlacementController {
     @FXML
     private void startGame() throws IOException {
         if (areShipsPlaced()) {
+            System.out.println("Belegte Zellen (row, col):");
+            for (int i = 0; i < occupiedCells.size(); i++) {
+                int[] coord = occupiedCells.get(i);
+                System.out.println((i + 1) + ". (" + coord[0] + ", " + coord[1] + ")");
+            }
             Main.setRoot("PlayingField");
         }
     }
@@ -190,7 +195,7 @@ public class ShipPlacementController {
 
             System.out.println("Überlappen das Schiff?");
             System.out.println(isOverlapping(cellCol, cellRow, selectedShipSize, isVertical, ships));
-            
+
             if (shipFitsInGrid) {
                 success = true;
                 placeShip(gridPane, cellRow, cellCol, selectedShipSize);
@@ -202,17 +207,21 @@ public class ShipPlacementController {
         }
     }
 
-    
     private static void placeShip(GridPane gridPane, int cellRow, int cellCol, int shipSize) {
-        for (int i = 0; i < shipSize; i++) {
-            StackPane targetCell = isVertical
-                    ? (StackPane) gridPane.getChildren().get(((cellRow + i) * Main.GRID_SIZE) + cellCol)
-                    : (StackPane) gridPane.getChildren().get((cellRow * Main.GRID_SIZE) + (cellCol - i));
+    for (int i = 0; i < shipSize; i++) {
+        int row = isVertical ? cellRow + i : cellRow;
+        int col = isVertical ? cellCol : cellCol - i;
 
-            Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
-            targetBorder.setFill(Color.rgb(0, 100, 0, 0.5));
-        }
+        // Koordinaten zur Liste hinzufügen
+        occupiedCells.add(new int[]{row, col});
+
+        // Zelle einfärben
+        StackPane targetCell = (StackPane) gridPane.getChildren().get((row * Main.GRID_SIZE) + col);
+        Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
+        targetBorder.setFill(Color.rgb(0, 100, 0, 0.5));
     }
+}
+
 
     private static void saveShipPosition(ArrayList<Ship> ships, int shipSize, int cellRow, int cellCol) {
         int[] positionOnGrid = new int[] { cellRow, cellCol };

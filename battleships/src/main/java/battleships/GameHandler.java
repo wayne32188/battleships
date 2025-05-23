@@ -6,8 +6,12 @@ public class GameHandler {
     private boolean isHostTurn = true;
 
     GameHandler(boolean isNpcEnemy) {
+        setGameIsRunning(true);
         while (isRunning()) {
             if (!isNpcEnemy) {
+                System.out.println("Zwei Spieler Modus noch nicht implementiert");
+            } else {
+                
             }
         }
     }
@@ -16,7 +20,9 @@ public class GameHandler {
         return gameIsRunning;
     }
 
-    public void setGameIsRunning(boolean gameIsRunning) {
+    
+
+    private void setGameIsRunning(boolean gameIsRunning) {
         this.gameIsRunning = gameIsRunning;
     }
 

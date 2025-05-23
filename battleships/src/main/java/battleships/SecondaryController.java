@@ -26,6 +26,7 @@ public class SecondaryController {
     private boolean isHostTurn = true;
     private static GameHandler gameHandler;
 
+
     private static final Dotenv dotenv = Dotenv.load();
 
     @FXML
@@ -40,7 +41,7 @@ public class SecondaryController {
 
         System.out.println("SecondaryController initialized");
 
-        gameHandler = new GameHandler(true);
+        //gameHandler = new GameHandler(true);
     }
 
     public static GridPane createGameGrid(boolean isPlayerGrid, ArrayList<Ship> ships) {
@@ -116,6 +117,8 @@ public class SecondaryController {
 
                 Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
                 targetBorder.setFill(Color.rgb(0, 100, 0, 1));
+
+                
             }
         }
     }
