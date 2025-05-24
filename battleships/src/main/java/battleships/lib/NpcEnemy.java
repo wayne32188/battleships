@@ -1,13 +1,11 @@
 package battleships.lib;
 
-import static battleships.lib.Helper.doesShipFit;
-import static battleships.lib.Helper.isOverlapping;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 import battleships.Main;
 import battleships.Ship;
+import static battleships.lib.Helper.isOverlapping;
 
 public class NpcEnemy {
 
@@ -26,7 +24,7 @@ public class NpcEnemy {
         ArrayList<int[]> occupiedCells = new ArrayList<>();
         Random random = new Random();
 
-        int[] sizes = { 3, 4, 5 }; // TODO Ändern, wenn Spieler auch mehr und andere Schiffe haben kann
+        int[] sizes = {3, 4, 5}; // TODO Ändern, wenn Spieler auch mehr und andere Schiffe haben kann
 
         for (int shipSize : sizes) {
             boolean placed = false;
@@ -42,14 +40,14 @@ public class NpcEnemy {
 
                 if (!isOverlapping(row, col, shipSize, isVertical, occupiedCells)) {
                     Ship ship = new Ship(shipSize, isVertical);
-                    ship.setPosition(new int[] { row, col });
+                    ship.setPosition(new int[]{row, col});
                     ships.add(ship);
 
                     // Markiere belegte Zellen
                     for (int i = 0; i < shipSize; i++) {
                         int r = isVertical ? row + i : row;
                         int c = isVertical ? col : col + i;
-                        occupiedCells.add(new int[] { r, c });
+                        occupiedCells.add(new int[]{r, c});
                     }
 
                     placed = true;
@@ -59,5 +57,16 @@ public class NpcEnemy {
 
         System.out.println("kommst du hier hin vallah?");
         return ships;
+    }
+
+    public int[] randomShot() {
+        Random random = new Random();
+        int row, col;
+
+        // Der NPC wählt zufällig eine Zelle auf dem Spielfeld
+        row = random.nextInt(Main.GRID_SIZE);
+        col = random.nextInt(Main.GRID_SIZE);
+
+        return new int[]{row, col};
     }
 }

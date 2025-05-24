@@ -23,17 +23,20 @@ public class SecondaryController {
     @FXML
     private HBox playingGridBox;
 
-    private boolean isHostTurn = true;
     private static GameHandler gameHandler;
+    public static ArrayList<Ship> playerShips = new ArrayList<>();
+
+    private static StackPane[][] enemyCells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
+    public static StackPane[][] playerCells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
 
     private static final Dotenv dotenv = Dotenv.load();
 
     @FXML
     private void initialize() {
 
-        ArrayList<Ship> playerShips = ShipPlacementController.getShips();
+        playerShips = ShipPlacementController.getShips();
 
-        gameHandler = new GameHandler(true);
+        gameHandler = new GameHandler(true, playerShips);
 
         playerPlayingField = createGameGrid(true, playerShips);
         enemyPlayingField = createGameGrid(false, null);
@@ -50,10 +53,18 @@ public class SecondaryController {
 
         for (int row = 0; row < Main.GRID_SIZE; row++) {
             for (int col = 0; col < Main.GRID_SIZE; col++) {
-                StackPane cell = createClickableCell(row, col, isPlayerGrid);
+                StackPane cell = isPlayerGrid
+                        ? createNormalCell()
+                        : createClickableCell(row, col);
                 gridPane.add(cell, col, row);
                 cells[row][col] = cell;
             }
+        }
+
+        if (!isPlayerGrid) {
+            enemyCells = cells;
+        } else {
+            playerCells = cells;
         }
 
         if (isPlayerGrid) {
@@ -63,38 +74,57 @@ public class SecondaryController {
         return gridPane;
     }
 
-    private static StackPane createClickableCell(int row, int col, boolean isPlayerGrid) {
+    private static StackPane createClickableCell(int row, int col) {
         StackPane cell = ShipPlacementController.createCell();
-        if (!isPlayerGrid)
-            addMouseClickEvent(cell, row, col);
+        addMouseClickEvent(cell, row, col);
         return cell;
+    }
+
+    private static StackPane createNormalCell() {
+        return ShipPlacementController.createCell();
     }
 
     private static void addMouseClickEvent(StackPane cell, int row, int col) {
         cell.setOnMouseClicked((MouseEvent event) -> {
-            System.out.println("Zelle (" + row + ", " + col + ") wurde ausgewählt");
 
-            Rectangle border = getCellBorder(cell);
-            if (border != null) {
-                // Überprüfen, ob die Zelle Teil eines Schiffs ist
-                for (Ship ship : gameHandler.npcEnemy.getShips()) {
+            if (!gameHandler.isRunning()) {
+                System.out.println("Das Spiel ist nicht aktiv!");
+                return;
+            }
 
-                    if (ship.isHit(row, col) && gameHandler.isHostTurn()) {
-
-                        // Zelle ist Teil eines Schiffs und wurde getroffen
-                        border.setFill(Color.web(dotenv.get("CELL_HIT_COLOR"))); // Markiere die Zelle rot
-                        System.out.println("Schiff getroffen!");
-                        return;
-
-                    } else {
-                        // Wenn die Zelle kein Teil eines Schiffs ist, markiere sie grün oder
-                        // transparent
-                        border.setFill(Color.web(dotenv.get("CELL_MISSED_COLOR")));
-                    }
+            if (gameHandler.isHostTurn()) {
+                String cellKey = row + "," + col;
+                // Überprüfen, ob die Zelle bereits beschossen wurde
+                if (gameHandler.isCellAlreadyShot(cellKey)) {
+                    System.out.println("Zelle (" + row + ", " + col + ") wurde bereits beschossen!");
+                    return;
                 }
+                System.out.println("Zelle (" + row + ", " + col + ") wurde ausgewählt");
+                // Prüfen, ob das Schiff getroffen wurde
+                boolean isHit = gameHandler.isShipHit(false, row, col);
 
+                // Markiere die Zelle als getroffen oder verfehlt
+                markCellHitOrMiss(cell, isHit);
+                gameHandler.addShotCell(row, col);; // Zelle als beschossen speichern
+                gameHandler.playerMove(); // Spielerzug beenden
             }
         });
+    }
+
+    public static void handleEnemyMove(StackPane cell, boolean hit) {
+        markCellHitOrMiss(cell, hit);
+
+    }
+
+    private static void markCellHitOrMiss(StackPane cell, boolean hit) {
+        Rectangle border = getCellBorder(cell);
+        if (border != null) {
+            if (hit) {
+                border.setFill(Color.web(dotenv.get("CELL_HIT_COLOR")));
+            } else {
+                border.setFill(Color.web(dotenv.get("CELL_MISSED_COLOR")));
+            }
+        }
     }
 
     private static Rectangle getCellBorder(StackPane cell) {
@@ -125,13 +155,5 @@ public class SecondaryController {
     @FXML
     private void buttonHandler() throws IOException {
         Main.setRoot("ShipPlacement");
-    }
-
-    public boolean getIsHostTurn() {
-        return isHostTurn;
-    }
-
-    public void setIsHostTurn(boolean isHostTurn) {
-        this.isHostTurn = isHostTurn;
     }
 }

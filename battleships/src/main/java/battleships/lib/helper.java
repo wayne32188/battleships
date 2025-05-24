@@ -2,8 +2,6 @@ package battleships.lib;
 
 import java.util.ArrayList;
 
-import battleships.Ship;
-
 public class Helper {
 
     public static boolean doesShipFit(int cellColOrRow, int ship_size, int grid_size, boolean isVertical) {
