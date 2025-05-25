@@ -12,7 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class SecondaryController {
+public class GameHandlerController {
 
     @FXML
     private GridPane playerPlayingField;
@@ -43,7 +43,7 @@ public class SecondaryController {
 
         playingGridBox.getChildren().addAll(playerPlayingField, enemyPlayingField);
 
-        System.out.println("SecondaryController initialized");
+        System.out.println("GameHandlerController initialized");
 
     }
 
@@ -65,9 +65,6 @@ public class SecondaryController {
             enemyCells = cells;
         } else {
             playerCells = cells;
-        }
-
-        if (isPlayerGrid) {
             drawShips(gridPane, ships);
         }
 
@@ -101,11 +98,12 @@ public class SecondaryController {
                 }
                 System.out.println("Zelle (" + row + ", " + col + ") wurde ausgewählt");
                 // Prüfen, ob das Schiff getroffen wurde
-                boolean isHit = gameHandler.isShipHit(false, row, col);
+                boolean isHit = gameHandler.hitShip(false, row, col);
 
                 // Markiere die Zelle als getroffen oder verfehlt
                 markCellHitOrMiss(cell, isHit);
-                gameHandler.addShotCell(row, col);; // Zelle als beschossen speichern
+                gameHandler.addShotCell(row, col);
+                ; // Zelle als beschossen speichern
                 gameHandler.playerMove(); // Spielerzug beenden
             }
         });
