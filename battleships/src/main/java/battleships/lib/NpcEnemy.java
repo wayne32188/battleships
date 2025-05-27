@@ -24,7 +24,7 @@ public class NpcEnemy {
         ArrayList<int[]> occupiedCells = new ArrayList<>();
         Random random = new Random();
 
-        int[] sizes = {3, 4, 5}; // TODO Ändern, wenn Spieler auch mehr und andere Schiffe haben kann
+        int[] sizes = { 3, 4, 5 }; // TODO Ändern, wenn Spieler auch mehr und andere Schiffe haben kann
 
         for (int shipSize : sizes) {
             boolean placed = false;
@@ -38,16 +38,21 @@ public class NpcEnemy {
                 int row = random.nextInt(maxRow + 1);
                 int col = random.nextInt(maxCol + 1);
 
+                // Prüfe, ob das Schiff auf das Feld passt
+                if (!Helper.doesShipFit(isVertical ? row : col, shipSize, Main.GRID_SIZE, isVertical)) {
+                    continue;
+                }
+
                 if (!isOverlapping(row, col, shipSize, isVertical, occupiedCells)) {
                     Ship ship = new Ship(shipSize, isVertical);
-                    ship.setPosition(new int[]{row, col});
+                    ship.setPosition(new int[] { row, col });
                     ships.add(ship);
 
                     // Markiere belegte Zellen
                     for (int i = 0; i < shipSize; i++) {
                         int r = isVertical ? row + i : row;
                         int c = isVertical ? col : col + i;
-                        occupiedCells.add(new int[]{r, c});
+                        occupiedCells.add(new int[] { r, c });
                     }
 
                     placed = true;
@@ -67,6 +72,6 @@ public class NpcEnemy {
         row = random.nextInt(Main.GRID_SIZE);
         col = random.nextInt(Main.GRID_SIZE);
 
-        return new int[]{row, col};
+        return new int[] { row, col };
     }
 }

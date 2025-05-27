@@ -40,6 +40,8 @@ public class ShipPlacementController {
     private static final ArrayList<Ship> ships = new ArrayList<>();
     public static ArrayList<int[]> occupiedCells = new ArrayList<>();
 
+    private static StackPane[][] playerCells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
+
     private static final Dotenv dotenv = Dotenv.load();
 
     public static boolean isVertical = false;
@@ -48,13 +50,12 @@ public class ShipPlacementController {
     public void initialize() {
 
         // Erstelle zwei GridPane-Instanzen für Spieler und Gegner
-        playerField = createPlayerField();
-        enemyField = createEnemyField();
+
+        playerField.getChildren().setAll(createPlayerField().getChildren());
+        enemyField.getChildren().setAll(createEnemyField().getChildren());
 
         final boolean IS_VERTICAL = false;
         setRotationText(IS_VERTICAL);
-
-        gridBox.getChildren().addAll(playerField, enemyField);
 
         // Schiffe erstellen mit Größe 3, 4, 5
         ships.add(new Ship(3, false));
@@ -63,7 +64,7 @@ public class ShipPlacementController {
 
         // Visuelle Darstellung der Schiffe erstellen
         for (Ship ship : ships) {
-            Rectangle shipRectangle = ship.createShip(Main.CELL_SIZE, IS_VERTICAL);
+            StackPane shipRectangle = ship.createShipVisuals(Main.CELL_SIZE, IS_VERTICAL);
             shipsBox.getChildren().add(shipRectangle);
         }
     }
@@ -148,6 +149,7 @@ public class ShipPlacementController {
 
                 if (isPlayerGrid) {
                     addDragAndDropHandlers(cell, gridPane, ships);
+                    playerCells[row][col] = cell; // Speichere Referenz
                 }
 
                 gridPane.add(cell, col, row);
@@ -215,11 +217,9 @@ public class ShipPlacementController {
             int row = isVertical ? cellRow + i : cellRow;
             int col = isVertical ? cellCol : cellCol - i;
 
-            // Koordinaten zur Liste hinzufügen
             occupiedCells.add(new int[] { row, col });
 
-            // Zelle einfärben
-            StackPane targetCell = (StackPane) gridPane.getChildren().get((row * Main.GRID_SIZE) + col);
+            StackPane targetCell = playerCells[row][col];
             Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
             targetBorder.setFill(Color.rgb(0, 100, 0, 0.5));
         }

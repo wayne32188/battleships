@@ -34,7 +34,7 @@ public class Main extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ShipPlacement.fxml"));
         Parent root = fxmlLoader.load();
-        scene = new Scene(root, 700, 700);
+        scene = new Scene(root, 1000, 1000);
         ShipPlacementController shipPlacementController = fxmlLoader.getController();
 
         // Rotation durch Taste "R"
@@ -52,8 +52,6 @@ public class Main extends Application {
         
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drag-and-Drop Schiffe auf einem 10x10 Grid");
-        primaryStage.setMaxWidth(200);
-        primaryStage.setMaxHeight(200);
         primaryStage.show();
     }
 

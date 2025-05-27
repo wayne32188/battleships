@@ -26,29 +26,30 @@ public class GameHandlerController {
     private static GameHandler gameHandler;
     public static ArrayList<Ship> playerShips = new ArrayList<>();
 
-    private static StackPane[][] enemyCells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
+    /**
+     * Ein 2D-Array von StackPanes, die die Zellen des Spieler-Spielfelds
+     * repräsentieren.
+     * Wird auch im GameHandler verwendet, um die getroffene Spielerzelle zu
+     * markieren. *
+     */
     public static StackPane[][] playerCells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
 
     private static final Dotenv dotenv = Dotenv.load();
 
     @FXML
     private void initialize() {
-
         playerShips = ShipPlacementController.getShips();
-
         gameHandler = new GameHandler(true, playerShips);
 
-        playerPlayingField = createGameGrid(true, playerShips);
-        enemyPlayingField = createGameGrid(false, null);
-
-        playingGridBox.getChildren().addAll(playerPlayingField, enemyPlayingField);
+        // Statt neue GridPanes zu erstellen, fülle die vorhandenen:
+        fillGridPane(playerPlayingField, true, playerShips);
+        fillGridPane(enemyPlayingField, false, null);
 
         System.out.println("GameHandlerController initialized");
-
     }
 
-    public static GridPane createGameGrid(boolean isPlayerGrid, ArrayList<Ship> ships) {
-        GridPane gridPane = new GridPane();
+    private void fillGridPane(GridPane gridPane, boolean isPlayerGrid, ArrayList<Ship> ships) {
+        gridPane.getChildren().clear(); // Wichtig: vorherige Kinder entfernen
         StackPane[][] cells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
 
         for (int row = 0; row < Main.GRID_SIZE; row++) {
@@ -56,19 +57,16 @@ public class GameHandlerController {
                 StackPane cell = isPlayerGrid
                         ? createNormalCell()
                         : createClickableCell(row, col);
+
                 gridPane.add(cell, col, row);
                 cells[row][col] = cell;
             }
         }
 
-        if (!isPlayerGrid) {
-            enemyCells = cells;
-        } else {
+        if (isPlayerGrid) {
             playerCells = cells;
             drawShips(gridPane, ships);
         }
-
-        return gridPane;
     }
 
     private static StackPane createClickableCell(int row, int col) {
@@ -92,7 +90,7 @@ public class GameHandlerController {
             if (gameHandler.isHostTurn()) {
                 String cellKey = row + "," + col;
                 // Überprüfen, ob die Zelle bereits beschossen wurde
-                if (gameHandler.isCellAlreadyShot(cellKey)) {
+                if (gameHandler.isCellAlreadyShot(cellKey, false)) {
                     System.out.println("Zelle (" + row + ", " + col + ") wurde bereits beschossen!");
                     return;
                 }
@@ -102,9 +100,9 @@ public class GameHandlerController {
 
                 // Markiere die Zelle als getroffen oder verfehlt
                 markCellHitOrMiss(cell, isHit);
-                gameHandler.addShotCell(row, col);
-                ; // Zelle als beschossen speichern
-                gameHandler.playerMove(); // Spielerzug beenden
+                gameHandler.addShotCell(row, col, false);
+                // Zelle als beschossen speichern
+                gameHandler.endPlayerMove(); // Spielerzug beenden
             }
         });
     }

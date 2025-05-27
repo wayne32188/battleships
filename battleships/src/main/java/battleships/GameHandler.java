@@ -6,7 +6,6 @@ import java.util.Set;
 
 import battleships.lib.NpcEnemy;
 import javafx.scene.layout.StackPane;
-import javafx.scene.control.*;
 
 /**
  * Die zentrale Spiellogik für das Battleships-Spiel.
@@ -30,8 +29,8 @@ public class GameHandler {
     private ArrayList<Ship> playerShips = new ArrayList<>();
 
     /** Set mit allen bereits beschossenen Zellen (Format: "row,col"). */
-    private static final Set<String> shotCells = new HashSet<>();
-    // TODO für echten Multiplayer weitere Variable für die Shot cells einbauen
+    private static final Set<String> shotPlayerCells = new HashSet<>();
+    private static final Set<String> shotEnemyCells = new HashSet<>();
 
     /** Zähler für zerstörte Schiffe des Spielers. */
     private int playerShipsDestroyed = 0;
@@ -44,7 +43,8 @@ public class GameHandler {
 
     /**
      * Erstellt einen neuen GameHandler.
-     * @param isNpcEnemy True, wenn der Gegner ein NPC ist.
+     * 
+     * @param isNpcEnemy  True, wenn der Gegner ein NPC ist.
      * @param playerShips Die Schiffe des Spielers.
      */
     public GameHandler(boolean isNpcEnemy, ArrayList<Ship> playerShips) {
@@ -58,10 +58,12 @@ public class GameHandler {
     }
 
     /**
-     * Prüft, ob ein Schiff auf der angegebenen Seite (Spieler oder Gegner) getroffen wurde.
+     * Prüft, ob ein Schiff auf der angegebenen Seite (Spieler oder Gegner)
+     * getroffen wurde.
+     * 
      * @param targetIsPlayer True, wenn das Ziel der Spieler ist, sonst Gegner.
-     * @param row Zeile des Schusses.
-     * @param col Spalte des Schusses.
+     * @param row            Zeile des Schusses.
+     * @param col            Spalte des Schusses.
      * @return True, wenn ein Schiff getroffen wurde, sonst false.
      */
     public boolean hitShip(boolean targetIsPlayer, int row, int col) {
@@ -90,6 +92,7 @@ public class GameHandler {
 
     /**
      * Gibt zurück, ob das Spiel aktuell läuft.
+     * 
      * @return True, wenn das Spiel läuft.
      */
     public boolean isRunning() {
@@ -98,7 +101,9 @@ public class GameHandler {
 
     /**
      * Beendet das Spiel und gibt das Ergebnis aus.
-     * @param isPlayerShips True, wenn die Schiffe des Spielers zerstört wurden (Verlust).
+     * 
+     * @param isPlayerShips True, wenn die Schiffe des Spielers zerstört wurden
+     *                      (Verlust).
      */
     public void handleGameOver(boolean isPlayerShips) {
         if (isPlayerShips) {
@@ -111,6 +116,7 @@ public class GameHandler {
 
     /**
      * Gibt zurück, ob der Gegner ein NPC ist.
+     * 
      * @return True, wenn NPC-Gegner.
      */
     public boolean isNpcEnemy() {
@@ -119,6 +125,7 @@ public class GameHandler {
 
     /**
      * Gibt zurück, ob der Host (Spieler) am Zug ist.
+     * 
      * @return True, wenn Host am Zug.
      */
     public boolean isHostTurn() {
@@ -133,19 +140,19 @@ public class GameHandler {
         int[] randomShot;
         do {
             randomShot = npcEnemy.randomShot();
-        } while (isCellAlreadyShot(randomShot[0] + "," + randomShot[1]));
+        } while (isCellAlreadyShot((randomShot[0] + "," + randomShot[1]), true));
 
         StackPane cell = GameHandlerController.playerCells[randomShot[0]][randomShot[1]];
         boolean hit = hitShip(true, randomShot[0], randomShot[1]);
         GameHandlerController.handleEnemyMove(cell, hit);
         isHostTurn = true;
-        addShotCell(randomShot[0], randomShot[1]);
+        addShotCell(randomShot[0], randomShot[1], true);
     }
 
     /**
      * Beendet den Spielerzug und startet ggf. den NPC-Zug.
      */
-    public void playerMove() {
+    public void endPlayerMove() {
         isHostTurn = false;
         if (isNpcEnemy) {
             npcMove();
@@ -153,21 +160,33 @@ public class GameHandler {
     }
 
     /**
-     * Fügt eine beschossene Zelle zum Set hinzu.
-     * @param row Zeile der Zelle.
-     * @param col Spalte der Zelle.
+     * Fügt eine beschossene Zelle zum passenden Set hinzu.
+     * 
+     * @param row            Zeile der Zelle.
+     * @param col            Spalte der Zelle.
+     * @param targetIsPlayer True, wenn auf das Spielfeld des Spielers geschossen
+     *                       wurde, sonst Gegner.
      */
-    public void addShotCell(int row, int col) {
-        shotCells.add(row + "," + col);
+    public void addShotCell(int row, int col, boolean targetIsPlayer) {
+        String key = row + "," + col;
+        if (targetIsPlayer) {
+            shotPlayerCells.add(key);
+        } else {
+            shotEnemyCells.add(key);
+        }
     }
 
     /**
      * Prüft, ob eine Zelle bereits beschossen wurde.
-     * @param cellKey Schlüssel im Format "row,col".
+     * 
+     * @param row            Zeile der Zelle.
+     * @param col            Spalte der Zelle.
+     * @param targetIsPlayer True, wenn auf das Spielfeld des Spielers geprüft
+     *                       werden soll, sonst Gegner.
      * @return True, wenn die Zelle bereits beschossen wurde.
      */
-    public boolean isCellAlreadyShot(String cellKey) {
-        return shotCells.contains(cellKey);
+    public boolean isCellAlreadyShot(String cellKey, boolean targetIsPlayer) {
+        return targetIsPlayer ? shotPlayerCells.contains(cellKey) : shotEnemyCells.contains(cellKey);
     }
 
 }
