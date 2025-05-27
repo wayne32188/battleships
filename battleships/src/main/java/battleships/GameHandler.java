@@ -41,6 +41,8 @@ public class GameHandler {
     /** Referenz auf den NPC-Gegner (falls aktiviert). */
     protected NpcEnemy npcEnemy;
 
+    private boolean playerIsWinner;
+
     /**
      * Erstellt einen neuen GameHandler.
      * 
@@ -70,7 +72,6 @@ public class GameHandler {
         ArrayList<Ship> ships = targetIsPlayer ? playerShips : enemyShips;
         for (Ship ship : ships) {
             if (ship.isHit(row, col)) {
-                System.out.println("Schiff getroffen!");
                 if (ship.isDestroyed()) {
                     if (targetIsPlayer) {
                         playerShipsDestroyed++;
@@ -107,8 +108,10 @@ public class GameHandler {
      */
     public void handleGameOver(boolean isPlayerShips) {
         if (isPlayerShips) {
+            playerIsWinner = false;
             System.out.println("Du hast verloren!");
         } else {
+            playerIsWinner = true;
             System.out.println("Du hast gewonnen!");
         }
         gameIsRunning = false;

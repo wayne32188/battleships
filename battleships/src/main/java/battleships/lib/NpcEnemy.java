@@ -7,24 +7,44 @@ import battleships.Main;
 import battleships.Ship;
 import static battleships.lib.Helper.isOverlapping;
 
+/**
+ * Repräsentiert einen NPC-Gegner, der Schiffe zufällig platziert und zufällig
+ * schießt.
+ */
 public class NpcEnemy {
 
+    /** Die vom NPC platzierten Schiffe. */
     private ArrayList<Ship> ships;
 
+    /**
+     * Konstruktor. Platziert die Schiffe zufällig auf dem Spielfeld.
+     */
     public NpcEnemy() {
         ships = generateRandomShips();
     }
 
+    /**
+     * Gibt die vom NPC platzierten Schiffe zurück.
+     * 
+     * @return Liste der Schiffe.
+     */
     public ArrayList<Ship> getShips() {
         return ships;
     }
 
+    /**
+     * Generiert eine zufällige Platzierung der NPC-Schiffe auf dem Spielfeld.
+     * Es wird geprüft, dass die Schiffe nicht überlappen und vollständig ins Grid
+     * passen.
+     * 
+     * @return Liste der platzierten Schiffe.
+     */
     private ArrayList<Ship> generateRandomShips() {
         ArrayList<Ship> ships = new ArrayList<>();
         ArrayList<int[]> occupiedCells = new ArrayList<>();
         Random random = new Random();
 
-        int[] sizes = { 3, 4, 5 }; // TODO Ändern, wenn Spieler auch mehr und andere Schiffe haben kann
+        int[] sizes = { 3, 4, 5 }; // TODO: Anpassen, falls mehr/andere Schiffe möglich sind
 
         for (int shipSize : sizes) {
             boolean placed = false;
@@ -43,6 +63,7 @@ public class NpcEnemy {
                     continue;
                 }
 
+                // Prüfe, ob das Schiff mit anderen Schiffen überlappt
                 if (!isOverlapping(row, col, shipSize, isVertical, occupiedCells)) {
                     Ship ship = new Ship(shipSize, isVertical);
                     ship.setPosition(new int[] { row, col });
@@ -60,10 +81,14 @@ public class NpcEnemy {
             }
         }
 
-        System.out.println("kommst du hier hin vallah?");
         return ships;
     }
 
+    /**
+     * Gibt einen zufälligen Schuss (Zellenkoordinaten) des NPC zurück.
+     * 
+     * @return Ein int-Array mit [row, col].
+     */
     public int[] randomShot() {
         Random random = new Random();
         int row, col;

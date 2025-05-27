@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.control.Tooltip;
 
 /**
  * Die Klasse Ship repräsentiert ein Schiff im Spiel Battleships.
@@ -42,6 +43,9 @@ public class Ship {
 
     /** Liste der bereits getroffenen Zellen des Schiffs. */
     private final List<int[]> hitCells = new ArrayList<>();
+
+    /** Das StackPane-Objekt für die visuelle Darstellung des Schiffs. */
+    private StackPane shipPane;
 
     /**
      * Konstruktor für ein Schiff.
@@ -194,9 +198,12 @@ public class Ship {
         Label sizeLabel = new Label(String.valueOf(SHIP_SIZE));
         sizeLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
 
-        StackPane shipPane = new StackPane(shipVisuals, sizeLabel);
+        shipPane = new StackPane(shipVisuals, sizeLabel);
 
-        // Drag-and-drop wie gehabt auf shipPane statt Rectangle
+        // Tooltip hinzufügen
+        Tooltip tooltip = new Tooltip("Zieh mich!");
+        Tooltip.install(shipPane, tooltip);
+
         shipPane.setOnDragDetected(event -> {
             shipPane.setMouseTransparent(true);
             Dragboard db = shipPane.startDragAndDrop(TransferMode.MOVE);
@@ -205,7 +212,6 @@ public class Ship {
             db.setContent(content);
             event.consume();
         });
-
 
         shipPane.setOnDragDone(event -> {
             if (event.getTransferMode() == TransferMode.MOVE) {
@@ -219,12 +225,21 @@ public class Ship {
     }
 
     /**
+     * Gibt das StackPane-Objekt der visuellen Darstellung zurück.
+     * 
+     * @return Das StackPane-Objekt.
+     */
+    public StackPane getShipPane() {
+        return shipPane;
+    }
+
+    /**
      * Aktualisiert die Ausrichtung des Schiffs und passt die visuelle Darstellung
      * an.
      * 
      * @param isVertical Gibt an, ob das Schiff vertikal oder horizontal sein soll.
      */
-    public void updatedRotation(boolean isVertical) {
+    public void updateRotation(boolean isVertical) {
         this.isVertical = isVertical;
         if (shipVisuals != null) {
             if (this.isVertical) {

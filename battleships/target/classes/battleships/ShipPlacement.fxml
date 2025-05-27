@@ -9,34 +9,57 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.Region?>
 
 <ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="battleships.ShipPlacementController"
-            fitToWidth="true" fitToHeight="true" pannable="true" style="-fx-background: #e6f0fa;">
-    <VBox spacing="24" alignment="TOP_CENTER" style="-fx-background-color: #e6f0fa; -fx-padding: 30 0 30 0;">
-        <Label text="Schiffe platzieren" style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-padding: 10 0 10 0;"/>
+    fitToWidth="true" fitToHeight="true" pannable="true" style="-fx-background: #e6f0fa;">
+    <VBox spacing="24" alignment="TOP_CENTER"
+        style="-fx-background-color: #e6f0fa; -fx-padding: 30 0 30 0;">
+        <Label text="Schiffe platzieren"
+            style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-padding: 10 0 10 0;" />
         <HBox fx:id="gridBox" spacing="40" alignment="CENTER">
             <VBox spacing="10" alignment="CENTER">
-                <Label text="Dein Spielfeld" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                <Label text="Dein Spielfeld" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
                 <StackPane alignment="CENTER">
-                    <GridPane fx:id="playerField" style="-fx-background-color: #d0e6fa; -fx-padding: 10; -fx-border-color: #4682b4; -fx-border-width: 2;"/>
+                    <GridPane fx:id="playerField"
+                        style="-fx-background-color: #d0e6fa; -fx-padding: 10; -fx-border-color: #4682b4; -fx-border-width: 2;" />
                 </StackPane>
             </VBox>
             <VBox spacing="10" alignment="CENTER">
-                <Label text="Gegnerisches Spielfeld (Vorschau)" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                <Label text="Gegnerisches Spielfeld (Vorschau)"
+                    style="-fx-font-size: 16px; -fx-font-weight: bold;" />
                 <StackPane alignment="CENTER">
-                    <GridPane fx:id="enemyField" style="-fx-padding: 10; -fx-border-color: #b44646; -fx-border-width: 2;"/>
+                    <GridPane fx:id="enemyField"
+                        style="-fx-padding: 10; -fx-border-color: #b44646; -fx-border-width: 2;" />
                 </StackPane>
             </VBox>
         </HBox>
-        <Separator/>
+        <Separator />
         <VBox spacing="12" alignment="CENTER">
-            <Text text="Rotation mit Taste &quot;R&quot; ändern" style="-fx-font-size: 14px;"/>
-            <Text fx:id="rotationHint" style="-fx-font-size: 13px;"/>
-            <VBox fx:id="shipsBox" spacing="10" alignment="CENTER"/>
+            <Text text="Rotation mit Taste &quot;R&quot; ändern" style="-fx-font-size: 14px;" />
+            <Text fx:id="rotationHint" style="-fx-font-size: 13px;" />
+            <GridPane hgap="20" alignment="CENTER">
+                <!-- Infobox links -->
+                <VBox alignment="TOP_LEFT" prefWidth="180" GridPane.columnIndex="0">
+                    <Label text="Info" style="-fx-font-size: 15px; -fx-font-weight: bold;" />
+                    <Text fx:id="infoBox" wrappingWidth="160" style="-fx-font-size: 13px;" />
+                </VBox>
+
+                <!-- SchiffeBox absolut mittig -->
+                <VBox fx:id="shipsBox" spacing="10" alignment="CENTER" GridPane.columnIndex="1" />
+
+                <!-- Rechte Spalte leer (optische Balance) -->
+                <Region prefWidth="180" GridPane.columnIndex="2" />
+            </GridPane>
             <HBox spacing="16" alignment="CENTER">
-                <Button fx:id="resetButton" text="Schiffe zurücksetzen" onAction="#resetAllShips" style="-fx-font-size: 14px;"/>
-                <Button fx:id="openSecondaryButton" text="Starte Spiel" onAction="#startGame" style="-fx-font-size: 14px;"/>
+                <Button fx:id="resetButton" text="Schiffe zurücksetzen" onAction="#resetAllShips"
+                    style="-fx-font-size: 14px;" />
+                <Button fx:id="openSecondaryButton" text="Starte Spiel" onAction="#startGame"
+                    style="-fx-font-size: 14px;" />
             </HBox>
+
+            <!-- Fehlermeldung -->
+            <Text fx:id="errorText" style="-fx-fill: red; -fx-font-size: 13px;" visible="false" />
         </VBox>
     </VBox>
 </ScrollPane>

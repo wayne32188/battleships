@@ -25,9 +25,6 @@ public class Helper {
             int row = isVertical ? cellRow + i : cellRow;
             int col = isVertical ? cellCol : cellCol - i;
 
-            //System.out.println("Reihe + Spalte");
-            //System.out.println("(" + row + "/" + col + ")");
-
             // Prüfen, ob diese Koordinate schon belegt ist
             for (int[] coord : occupiedCells) {
                 if (coord[0] == row && coord[1] == col) {

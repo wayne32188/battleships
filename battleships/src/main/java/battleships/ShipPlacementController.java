@@ -20,6 +20,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+/**
+ * Controller für das Schiffe-platzieren-Fenster.
+ * Verwaltet die Anzeige, Drag&Drop und Validierung der Schiffsplatzierung.
+ */
 public class ShipPlacementController {
 
     @FXML
@@ -37,20 +41,38 @@ public class ShipPlacementController {
     @FXML
     private Text rotationHint;
 
-    private static final ArrayList<Ship> ships = new ArrayList<>();
-    public static ArrayList<int[]> occupiedCells = new ArrayList<>();
-
-    private static StackPane[][] playerCells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
-
-    private static final Dotenv dotenv = Dotenv.load();
-
-    public static boolean isVertical = false;
+    @FXML
+    private Text infoBox;
 
     @FXML
+    private Text errorText;
+
+    /** Instanz für statischen Zugriff aus Hilfsmethoden. */
+    private static ShipPlacementController currentControllerInstance;
+
+    /** Liste aller Schiffe, die platziert werden sollen. */
+    private static final ArrayList<Ship> ships = new ArrayList<>();
+
+    /** Liste aller belegten Zellen (row, col) auf dem Spielfeld. */
+    public static ArrayList<int[]> occupiedCells = new ArrayList<>();
+
+    /** 2D-Array für schnellen Zugriff auf die Zellen des Spielerfelds. */
+    private static StackPane[][] playerCells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
+
+    /** Zugriff auf Umgebungsvariablen (z.B. Farben). */
+    private static final Dotenv dotenv = Dotenv.load();
+
+    /** Gibt an, ob das aktuell platzierte Schiff vertikal ist. */
+    public static boolean isVertical = false;
+
+    /**
+     * Initialisiert das Fenster, erzeugt Schiffe und setzt Infotexte.
+     */
+    @FXML
     public void initialize() {
+        currentControllerInstance = this;
 
         // Erstelle zwei GridPane-Instanzen für Spieler und Gegner
-
         playerField.getChildren().setAll(createPlayerField().getChildren());
         enemyField.getChildren().setAll(createEnemyField().getChildren());
 
@@ -67,8 +89,22 @@ public class ShipPlacementController {
             StackPane shipRectangle = ship.createShipVisuals(Main.CELL_SIZE, IS_VERTICAL);
             shipsBox.getChildren().add(shipRectangle);
         }
+
+        // Info-Text für den Spieler
+        infoBox.setText("Ziehen Sie die Schiffe auf das Spielfeld und platzieren Sie sie dort.\n" +
+                "Klicken Sie auf 'Reset', um alle Schiffe zurückzusetzen.\n" +
+                "Horizontale Schiffe werden von rechts nach links platziert, vertikale von oben nach unten.\n" +
+                "Die Schiffe dürfen sich nicht überlappen und müssen vollständig im Spielfeld platziert werden.\n");
+
+        errorText.setFill(Color.RED);
+        errorText.setVisible(false);
     }
 
+    /**
+     * Startet das Spiel, wenn alle Schiffe platziert wurden.
+     * 
+     * @throws IOException falls das Spielfeld nicht geladen werden kann.
+     */
     @FXML
     private void startGame() throws IOException {
         if (areShipsPlaced()) {
@@ -81,14 +117,29 @@ public class ShipPlacementController {
         }
     }
 
+    /**
+     * Erstellt das Spielerfeld mit Drag&Drop-Unterstützung.
+     * 
+     * @return Das GridPane für das Spielerfeld.
+     */
     private GridPane createPlayerField() {
         return createGridPane(true, ships);
     }
 
+    /**
+     * Erstellt das Gegnerfeld (ohne Drag&Drop).
+     * 
+     * @return Das GridPane für das Gegnerfeld.
+     */
     private GridPane createEnemyField() {
         return createGridPane(false, null);
     }
 
+    /**
+     * Setzt den Rotationstext für die Anzeige.
+     * 
+     * @param isVertical True, wenn vertikal.
+     */
     protected void setRotationText(boolean isVertical) {
         if (isVertical) {
             rotationHint.setText("Vertical");
@@ -97,8 +148,14 @@ public class ShipPlacementController {
         }
     }
 
+    /**
+     * Setzt das Spielfeld und die Schiffe zurück.
+     * Setzt belegte Zellen und Sichtbarkeit der Schiffe zurück.
+     */
     @FXML
     private void resetAllShips() {
+        occupiedCells.clear(); // Belegte Zellen zurücksetzen
+
         for (int row = 0; row < Main.GRID_SIZE; row++) {
             for (int col = 0; col < Main.GRID_SIZE; col++) {
                 int cellIndex = row * Main.GRID_SIZE + col;
@@ -107,18 +164,26 @@ public class ShipPlacementController {
                 // Überprüfe die Farbe der Zelle
                 Rectangle border = (Rectangle) cell.getChildren().get(0);
                 if (!border.getFill().equals(Color.web(dotenv.get("CELL_BG_COLOR")))) {
-                    // Setze die Zellenfarbe zurück auf blau
                     border.setFill(Color.web(dotenv.get("CELL_BG_COLOR")));
                 }
             }
         }
+        currentControllerInstance.errorText.setVisible(false); // Fehlertext ausblenden
 
         // Alle Schiffe wieder sichtbar machen und Startpositionen zurücksetzen
         for (Ship ship : ships) {
-            ship.getShipVisuals().setVisible(true); // Sichtbarkeit wiederherstellen
+            if (ship.getShipPane() != null) {
+                ship.getShipPane().setVisible(true);
+            }
+            ship.setPosition(null);
         }
     }
 
+    /**
+     * Prüft, ob alle Schiffe platziert wurden.
+     * 
+     * @return True, wenn alle platziert sind.
+     */
     private boolean areShipsPlaced() {
         boolean allShipsPlaced = true;
         for (Ship ship : ships) {
@@ -127,7 +192,6 @@ public class ShipPlacementController {
                 break;
             }
         }
-
         if (allShipsPlaced) {
             System.out.println("\nAll ships placed!");
             return true;
@@ -136,10 +200,32 @@ public class ShipPlacementController {
         return false;
     }
 
+    /**
+     * Gibt die aktuelle Schiffsliste zurück.
+     * 
+     * @return Liste der Schiffe.
+     */
     public static ArrayList<Ship> getShips() {
         return ships;
     }
 
+    /**
+     * Zeigt einen Fehlertext im UI an.
+     * 
+     * @param text Der anzuzeigende Text.
+     */
+    private static void setErrorText(String text) {
+        currentControllerInstance.errorText.setText(text);
+        currentControllerInstance.errorText.setVisible(true);
+    }
+
+    /**
+     * Erstellt ein GridPane für das Spieler- oder Gegnerfeld.
+     * 
+     * @param isPlayerGrid True, wenn Spielerfeld.
+     * @param ships        Die Schiffe (nur für Spielerfeld).
+     * @return Das erzeugte GridPane.
+     */
     private static GridPane createGridPane(boolean isPlayerGrid, ArrayList<Ship> ships) {
         GridPane gridPane = new GridPane();
 
@@ -149,7 +235,7 @@ public class ShipPlacementController {
 
                 if (isPlayerGrid) {
                     addDragAndDropHandlers(cell, gridPane, ships);
-                    playerCells[row][col] = cell; // Speichere Referenz
+                    playerCells[row][col] = cell;
                 }
 
                 gridPane.add(cell, col, row);
@@ -158,8 +244,12 @@ public class ShipPlacementController {
         return gridPane;
     }
 
+    /**
+     * Erstellt eine einzelne Zelle für das Grid.
+     * 
+     * @return Die StackPane-Zelle.
+     */
     public static StackPane createCell() {
-
         StackPane cell = new StackPane();
         Rectangle border = new Rectangle(Main.CELL_SIZE, Main.CELL_SIZE);
         border.setFill(Color.web(dotenv.get("CELL_BG_COLOR")));
@@ -169,6 +259,13 @@ public class ShipPlacementController {
         return cell;
     }
 
+    /**
+     * Fügt Drag&Drop-Handler zu einer Zelle hinzu.
+     * 
+     * @param cell     Die Zelle.
+     * @param gridPane Das GridPane.
+     * @param ships    Die Schiffe.
+     */
     private static void addDragAndDropHandlers(StackPane cell, GridPane gridPane, ArrayList<Ship> ships) {
         cell.setOnDragOver(event -> {
             if (event.getGestureSource() != cell && event.getDragboard().hasString()) {
@@ -180,6 +277,14 @@ public class ShipPlacementController {
         cell.setOnDragDropped(event -> handleDragDropped(event, cell, gridPane, ships));
     }
 
+    /**
+     * Behandelt das Ablegen eines Schiffs auf einer Zelle.
+     * 
+     * @param event    Das DragEvent.
+     * @param cell     Die Zielzelle.
+     * @param gridPane Das GridPane.
+     * @param ships    Die Schiffe.
+     */
     private static void handleDragDropped(DragEvent event, StackPane cell, GridPane gridPane, ArrayList<Ship> ships) {
         Dragboard db = event.getDragboard();
         boolean success = false;
@@ -196,15 +301,17 @@ public class ShipPlacementController {
                     isVertical);
 
             if (isOverlapping(cellRow, cellCol, selectedShipSize, isVertical, occupiedCells)) {
-                System.out.println("Das Schiff überlappt mit einem anderen!");
+                setErrorText("Das Schiff überlappt mit einem anderen!");
                 return;
             }
+
             if (shipFitsInGrid) {
                 success = true;
                 placeShip(gridPane, cellRow, cellCol, selectedShipSize);
                 saveShipPosition(ships, selectedShipSize, cellRow, cellCol);
+                currentControllerInstance.errorText.setVisible(false); // Fehlertext ausblenden bei Erfolg
             } else {
-                System.out.println("Das Schiff passt nicht ins Grid.");
+                setErrorText("Das Schiff passt nicht ins Spielfeld.");
             }
 
             event.setDropCompleted(success);
@@ -212,10 +319,18 @@ public class ShipPlacementController {
         }
     }
 
+    /**
+     * Platziert ein Schiff auf dem Grid und markiert die belegten Zellen.
+     * 
+     * @param gridPane Das GridPane.
+     * @param cellRow  Startzeile.
+     * @param cellCol  Startspalte.
+     * @param shipSize Größe des Schiffs.
+     */
     private static void placeShip(GridPane gridPane, int cellRow, int cellCol, int shipSize) {
         for (int i = 0; i < shipSize; i++) {
             int row = isVertical ? cellRow + i : cellRow;
-            int col = isVertical ? cellCol : cellCol - i;
+            int col = isVertical ? cellCol : cellCol - i; // Achtung: ggf. zu cellCol + i ändern!
 
             occupiedCells.add(new int[] { row, col });
 
@@ -225,6 +340,14 @@ public class ShipPlacementController {
         }
     }
 
+    /**
+     * Speichert die Position eines platzierten Schiffs.
+     * 
+     * @param ships    Die Schiffe.
+     * @param shipSize Die Größe des platzierten Schiffs.
+     * @param cellRow  Startzeile.
+     * @param cellCol  Startspalte.
+     */
     private static void saveShipPosition(ArrayList<Ship> ships, int shipSize, int cellRow, int cellCol) {
         int[] positionOnGrid = new int[] { cellRow, cellCol };
         for (Ship ship : ships) {

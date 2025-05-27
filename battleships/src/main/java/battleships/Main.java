@@ -18,9 +18,8 @@ public class Main extends Application {
     public static final int GRID_SIZE = Integer.parseInt(dotenv.get("GRID_SIZE"));
     public static final int CELL_SIZE = Integer.parseInt(dotenv.get("CELL_SIZE"));
     public static final int BORDER_WIDTH = Integer.parseInt(dotenv.get("BORDER_WIDTH"));
-    
+
     private static Scene scene;
-    
 
     ArrayList<Ship> ships = new ArrayList<>();
 
@@ -34,7 +33,7 @@ public class Main extends Application {
 
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ShipPlacement.fxml"));
         Parent root = fxmlLoader.load();
-        scene = new Scene(root, 1000, 1000);
+        scene = new Scene(root, 1000, 1100);
         ShipPlacementController shipPlacementController = fxmlLoader.getController();
 
         // Rotation durch Taste "R"
@@ -44,12 +43,11 @@ public class Main extends Application {
                 shipPlacementController.setRotationText(ShipPlacementController.isVertical);
                 System.out.println("Rotation: " + (ShipPlacementController.isVertical ? "Vertikal" : "Horizontal"));
                 for (Ship ship : ships) {
-                    ship.updatedRotation(ShipPlacementController.isVertical); // Schiffe visuell aktualisieren
+                    ship.updateRotation(ShipPlacementController.isVertical); // Schiffe visuell aktualisieren
                 }
             }
         });
 
-        
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drag-and-Drop Schiffe auf einem 10x10 Grid");
         primaryStage.show();
