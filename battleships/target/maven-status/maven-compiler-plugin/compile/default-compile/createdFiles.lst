@@ -1,6 +1,5 @@
 battleships\lib\Helper.class
 battleships\GameHandler.class
-battleships\Main.class
 module-info.class
 battleships\ShipPlacementController.class
 battleships\Ship.class

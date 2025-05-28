@@ -57,7 +57,7 @@ public class ShipPlacementController {
     public static ArrayList<int[]> occupiedCells = new ArrayList<>();
 
     /** 2D-Array für schnellen Zugriff auf die Zellen des Spielerfelds. */
-    private static StackPane[][] playerCells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
+    private static StackPane[][] playerCells = new StackPane[App.GRID_SIZE][App.GRID_SIZE];
 
     /** Zugriff auf Umgebungsvariablen (z.B. Farben). */
     private static final Dotenv dotenv = Dotenv.load();
@@ -86,7 +86,7 @@ public class ShipPlacementController {
 
         // Visuelle Darstellung der Schiffe erstellen
         for (Ship ship : ships) {
-            StackPane shipRectangle = ship.createShipVisuals(Main.CELL_SIZE, IS_VERTICAL);
+            StackPane shipRectangle = ship.createShipVisuals(App.CELL_SIZE, IS_VERTICAL);
             shipsBox.getChildren().add(shipRectangle);
         }
 
@@ -113,7 +113,7 @@ public class ShipPlacementController {
                 int[] coord = occupiedCells.get(i);
                 System.out.println((i + 1) + ". (" + coord[0] + ", " + coord[1] + ")");
             }
-            Main.setRoot("PlayingField");
+            App.setRoot("PlayingField");
         }
     }
 
@@ -156,9 +156,9 @@ public class ShipPlacementController {
     private void resetAllShips() {
         occupiedCells.clear(); // Belegte Zellen zurücksetzen
 
-        for (int row = 0; row < Main.GRID_SIZE; row++) {
-            for (int col = 0; col < Main.GRID_SIZE; col++) {
-                int cellIndex = row * Main.GRID_SIZE + col;
+        for (int row = 0; row < App.GRID_SIZE; row++) {
+            for (int col = 0; col < App.GRID_SIZE; col++) {
+                int cellIndex = row * App.GRID_SIZE + col;
                 StackPane cell = (StackPane) playerField.getChildren().get(cellIndex);
 
                 // Überprüfe die Farbe der Zelle
@@ -229,8 +229,8 @@ public class ShipPlacementController {
     private static GridPane createGridPane(boolean isPlayerGrid, ArrayList<Ship> ships) {
         GridPane gridPane = new GridPane();
 
-        for (int row = 0; row < Main.GRID_SIZE; row++) {
-            for (int col = 0; col < Main.GRID_SIZE; col++) {
+        for (int row = 0; row < App.GRID_SIZE; row++) {
+            for (int col = 0; col < App.GRID_SIZE; col++) {
                 StackPane cell = createCell();
 
                 if (isPlayerGrid) {
@@ -251,10 +251,10 @@ public class ShipPlacementController {
      */
     public static StackPane createCell() {
         StackPane cell = new StackPane();
-        Rectangle border = new Rectangle(Main.CELL_SIZE, Main.CELL_SIZE);
+        Rectangle border = new Rectangle(App.CELL_SIZE, App.CELL_SIZE);
         border.setFill(Color.web(dotenv.get("CELL_BG_COLOR")));
         border.setStroke(Color.web(dotenv.get("CELL_STROKE_COLOR")));
-        border.setStrokeWidth(Main.BORDER_WIDTH);
+        border.setStrokeWidth(App.BORDER_WIDTH);
         cell.getChildren().add(border);
         return cell;
     }
@@ -297,7 +297,7 @@ public class ShipPlacementController {
             boolean shipFitsInGrid = doesShipFit(
                     isVertical ? cellRow : cellCol,
                     selectedShipSize,
-                    Main.GRID_SIZE,
+                    App.GRID_SIZE,
                     isVertical);
 
             if (isOverlapping(cellRow, cellCol, selectedShipSize, isVertical, occupiedCells)) {

@@ -5,12 +5,17 @@ import java.util.ArrayList;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 /**
  * Controller für das Spielfeld während des Spiels.
@@ -38,10 +43,11 @@ public class GameHandlerController {
      * 2D-Array der StackPane-Zellen des Spielerfelds.
      * Wird auch vom GameHandler verwendet, um Treffer zu markieren.
      */
-    public static StackPane[][] playerCells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
+    public static StackPane[][] playerCells = new StackPane[App.GRID_SIZE][App.GRID_SIZE];
 
     /** Zugriff auf Umgebungsvariablen (z.B. Farben). */
     private static final Dotenv dotenv = Dotenv.load();
+
 
     /**
      * Initialisiert das Spielfeld, lädt die Schiffe und füllt beide Grids.
@@ -67,10 +73,10 @@ public class GameHandlerController {
      */
     private void fillGridPane(GridPane gridPane, boolean isPlayerGrid, ArrayList<Ship> ships) {
         gridPane.getChildren().clear(); // Vorherige Kinder entfernen
-        StackPane[][] cells = new StackPane[Main.GRID_SIZE][Main.GRID_SIZE];
+        StackPane[][] cells = new StackPane[App.GRID_SIZE][App.GRID_SIZE];
 
-        for (int row = 0; row < Main.GRID_SIZE; row++) {
-            for (int col = 0; col < Main.GRID_SIZE; col++) {
+        for (int row = 0; row < App.GRID_SIZE; row++) {
+            for (int col = 0; col < App.GRID_SIZE; col++) {
                 StackPane cell = isPlayerGrid
                         ? createNormalCell()
                         : createClickableCell(row, col);
@@ -132,13 +138,14 @@ public class GameHandlerController {
                     return;
                 }
                 // Prüfen, ob das Schiff getroffen wurde
-                boolean isHit = gameHandler.hitShip(false, row, col);
-
+                boolean isHit;
+                isHit = gameHandler.hitShip(false, row, col);
                 // Markiere die Zelle als getroffen oder verfehlt
                 markCellHitOrMiss(cell, isHit);
-                gameHandler.addShotCell(row, col, false);
                 // Zelle als beschossen speichern
-                gameHandler.endPlayerMove(); // Spielerzug beenden
+                gameHandler.addShotCell(row, col, false);
+
+                gameHandler.endPlayerMove();
             }
         });
     }
@@ -197,8 +204,8 @@ public class GameHandlerController {
 
             for (int i = 0; i < ship.getSize(); i++) {
                 StackPane targetCell = ship.isVertical()
-                        ? (StackPane) gridPane.getChildren().get(((cellRow + i) * Main.GRID_SIZE) + cellCol)
-                        : (StackPane) gridPane.getChildren().get((cellRow * Main.GRID_SIZE) + (cellCol - i));
+                        ? (StackPane) gridPane.getChildren().get(((cellRow + i) * App.GRID_SIZE) + cellCol)
+                        : (StackPane) gridPane.getChildren().get((cellRow * App.GRID_SIZE) + (cellCol - i));
 
                 Rectangle targetBorder = (Rectangle) targetCell.getChildren().get(0);
                 targetBorder.setFill(Color.rgb(0, 100, 0, 1));
@@ -213,6 +220,6 @@ public class GameHandlerController {
      */
     @FXML
     private void buttonHandler() throws IOException {
-        Main.setRoot("ShipPlacement");
+        App.setRoot("ShipPlacement");
     }
 }

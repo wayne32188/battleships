@@ -3,7 +3,7 @@ package battleships.lib;
 import java.util.ArrayList;
 import java.util.Random;
 
-import battleships.Main;
+import battleships.App;
 import battleships.Ship;
 import static battleships.lib.Helper.isOverlapping;
 
@@ -16,11 +16,14 @@ public class NpcEnemy {
     /** Die vom NPC platzierten Schiffe. */
     private ArrayList<Ship> ships;
 
+    private int difficulty;
+
     /**
      * Konstruktor. Platziert die Schiffe zufällig auf dem Spielfeld.
      */
-    public NpcEnemy() {
+    public NpcEnemy(int difficulty) {
         ships = generateRandomShips();
+        this.difficulty = difficulty;
     }
 
     /**
@@ -52,14 +55,14 @@ public class NpcEnemy {
             while (!placed) {
                 boolean isVertical = random.nextBoolean();
 
-                int maxRow = isVertical ? Main.GRID_SIZE - shipSize : Main.GRID_SIZE - 1;
-                int maxCol = isVertical ? Main.GRID_SIZE - 1 : Main.GRID_SIZE - shipSize;
+                int maxRow = isVertical ? App.GRID_SIZE - shipSize : App.GRID_SIZE - 1;
+                int maxCol = isVertical ? App.GRID_SIZE - 1 : App.GRID_SIZE - shipSize;
 
                 int row = random.nextInt(maxRow + 1);
                 int col = random.nextInt(maxCol + 1);
 
                 // Prüfe, ob das Schiff auf das Feld passt
-                if (!Helper.doesShipFit(isVertical ? row : col, shipSize, Main.GRID_SIZE, isVertical)) {
+                if (!Helper.doesShipFit(isVertical ? row : col, shipSize, App.GRID_SIZE, isVertical)) {
                     continue;
                 }
 
@@ -94,8 +97,8 @@ public class NpcEnemy {
         int row, col;
 
         // Der NPC wählt zufällig eine Zelle auf dem Spielfeld
-        row = random.nextInt(Main.GRID_SIZE);
-        col = random.nextInt(Main.GRID_SIZE);
+        row = random.nextInt(App.GRID_SIZE);
+        col = random.nextInt(App.GRID_SIZE);
 
         return new int[] { row, col };
     }

@@ -1,11 +1,13 @@
 package battleships;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import battleships.lib.NpcEnemy;
 import javafx.scene.layout.StackPane;
+
 
 /**
  * Die zentrale Spiellogik für das Battleships-Spiel.
@@ -67,6 +69,7 @@ public class GameHandler {
      * @param row            Zeile des Schusses.
      * @param col            Spalte des Schusses.
      * @return True, wenn ein Schiff getroffen wurde, sonst false.
+     * @throws IOException 
      */
     public boolean hitShip(boolean targetIsPlayer, int row, int col) {
         ArrayList<Ship> ships = targetIsPlayer ? playerShips : enemyShips;
@@ -105,6 +108,7 @@ public class GameHandler {
      * 
      * @param isPlayerShips True, wenn die Schiffe des Spielers zerstört wurden
      *                      (Verlust).
+     * @throws IOException 
      */
     public void handleGameOver(boolean isPlayerShips) {
         if (isPlayerShips) {
@@ -115,6 +119,11 @@ public class GameHandler {
             System.out.println("Du hast gewonnen!");
         }
         gameIsRunning = false;
+        try {
+            WinnerPopupController.openWinnerPopup(playerIsWinner);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -138,8 +147,9 @@ public class GameHandler {
     /**
      * Führt den Zug des NPC-Gegners aus.
      * Wählt zufällig eine freie Zelle und feuert darauf.
+     * @throws IOException 
      */
-    public void npcMove() {
+    public void npcMove(){
         int[] randomShot;
         do {
             randomShot = npcEnemy.randomShot();
@@ -154,6 +164,7 @@ public class GameHandler {
 
     /**
      * Beendet den Spielerzug und startet ggf. den NPC-Zug.
+     * @throws IOException 
      */
     public void endPlayerMove() {
         isHostTurn = false;

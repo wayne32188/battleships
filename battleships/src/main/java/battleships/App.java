@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+public class App extends Application {
 
     private static final Dotenv dotenv = Dotenv.load();
 
@@ -31,7 +31,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws IOException {
         // Erstelle die Szene
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ShipPlacement.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ShipPlacement.fxml"));
         Parent root = fxmlLoader.load();
         scene = new Scene(root, 1000, 1100);
         ShipPlacementController shipPlacementController = fxmlLoader.getController();
@@ -57,8 +57,8 @@ public class Main extends Application {
         scene.setRoot(loadFXML(fxml));
     }
 
-    private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml + ".fxml"));
+    public static Parent loadFXML(String fxml) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return (Parent) fxmlLoader.load();
     }
 }

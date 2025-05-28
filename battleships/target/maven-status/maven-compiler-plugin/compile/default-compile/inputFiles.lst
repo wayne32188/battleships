@@ -1,6 +1,9 @@
-C:\repos\battleships\battleships\src\main\java\battleships\Main.java
-C:\repos\battleships\battleships\src\main\java\battleships\ShipPlacementController.java
-C:\repos\battleships\battleships\src\main\java\battleships\GameHandler.java
-C:\repos\battleships\battleships\src\main\java\module-info.java
-C:\repos\battleships\battleships\src\main\java\battleships\Ship.java
-C:\repos\battleships\battleships\src\main\java\battleships\lib\Helper.java
+c:\repos\battleships\battleships\src\main\java\battleships\GameHandlerController.java
+c:\repos\battleships\battleships\src\main\java\battleships\ShipPlacementController.java
+c:\repos\battleships\battleships\src\main\java\battleships\GameHandler.java
+c:\repos\battleships\battleships\src\main\java\battleships\WinnerPopupController.java
+c:\repos\battleships\battleships\src\main\java\module-info.java
+c:\repos\battleships\battleships\src\main\java\battleships\App.java
+c:\repos\battleships\battleships\src\main\java\battleships\Ship.java
+c:\repos\battleships\battleships\src\main\java\battleships\lib\Helper.java
+c:\repos\battleships\battleships\src\main\java\battleships\lib\NpcEnemy.java
