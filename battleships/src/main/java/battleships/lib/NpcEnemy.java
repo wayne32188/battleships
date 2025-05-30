@@ -15,6 +15,8 @@ public class NpcEnemy {
     /** Die vom NPC platzierten Schiffe. */
     private ArrayList<Ship> ships;
 
+    int[] sizes = { 3, 4, 5 }; // TODO: Anpassen, falls mehr/andere Schiffe möglich sind
+
     public NpcEnemy(int difficulty) {
 
         ships = generateRandomShips();
@@ -39,7 +41,7 @@ public class NpcEnemy {
         ArrayList<int[]> occupiedCells = new ArrayList<>();
         Random random = new Random();
 
-        int[] sizes = { 3, 4, 5 }; // TODO: Anpassen, falls mehr/andere Schiffe möglich sind
+        
 
         for (int shipSize : sizes) {
             boolean placed = false;

@@ -155,9 +155,8 @@ public class GameHandler {
         StackPane cell = GameHandlerController.playerCells[npcShot[0]][npcShot[1]];
         boolean isHit = hitShip(true, npcShot[0], npcShot[1]);
 
-        if(isHit) {
-            npcEnemy.setLastShotHit(isHit);
-        }
+        npcEnemy.setLastShotHit(isHit);
+        
         GameHandlerController.handleEnemyMove(cell, isHit);
         isHostTurn = true;
         addShotCell(npcShot[0], npcShot[1], true);

@@ -44,11 +44,11 @@ public class MediumStrategy implements ShootingStrategy {
                     resetTracking();
                 } else {
                     currentDirection = getNextUntestedDirection();
-                    lastShot = initialHit;
                 }
             }
         }
 
+        // Schuss generieren
         int[] newShot;
         if (mode == Mode.RANDOM) {
             newShot = getRandomShot(targetIsPlayer);
