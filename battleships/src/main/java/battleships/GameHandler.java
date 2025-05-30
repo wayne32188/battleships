@@ -8,7 +8,6 @@ import java.util.Set;
 import battleships.lib.NpcEnemy;
 import javafx.scene.layout.StackPane;
 
-
 /**
  * Die zentrale Spiellogik für das Battleships-Spiel.
  * Verwaltet Spieler- und Gegner-Schiffe, Spielstatus und Spielzüge.
@@ -56,7 +55,7 @@ public class GameHandler {
         this.gameIsRunning = true;
         this.playerShips = playerShips;
         if (isNpcEnemy) {
-            this.npcEnemy = new NpcEnemy();
+            this.npcEnemy = new NpcEnemy(ShipPlacementController.difficulty);
             this.enemyShips = npcEnemy.getShips();
         }
     }
@@ -69,7 +68,7 @@ public class GameHandler {
      * @param row            Zeile des Schusses.
      * @param col            Spalte des Schusses.
      * @return True, wenn ein Schiff getroffen wurde, sonst false.
-     * @throws IOException 
+     * @throws IOException
      */
     public boolean hitShip(boolean targetIsPlayer, int row, int col) {
         ArrayList<Ship> ships = targetIsPlayer ? playerShips : enemyShips;
@@ -108,7 +107,7 @@ public class GameHandler {
      * 
      * @param isPlayerShips True, wenn die Schiffe des Spielers zerstört wurden
      *                      (Verlust).
-     * @throws IOException 
+     * @throws IOException
      */
     public void handleGameOver(boolean isPlayerShips) {
         if (isPlayerShips) {
@@ -127,8 +126,7 @@ public class GameHandler {
     }
 
     /**
-     * Gibt zurück, ob der Gegner ein NPC ist.
-     * 
+     * Gibt zurück, ob der Gegner ein NPC ist.     * 
      * @return True, wenn NPC-Gegner.
      */
     public boolean isNpcEnemy() {
@@ -136,8 +134,7 @@ public class GameHandler {
     }
 
     /**
-     * Gibt zurück, ob der Host (Spieler) am Zug ist.
-     * 
+     * Gibt zurück, ob der Host (Spieler) am Zug ist.     * 
      * @return True, wenn Host am Zug.
      */
     public boolean isHostTurn() {
@@ -146,25 +143,30 @@ public class GameHandler {
 
     /**
      * Führt den Zug des NPC-Gegners aus.
-     * Wählt zufällig eine freie Zelle und feuert darauf.
-     * @throws IOException 
+     * 
+     * @throws IOException
      */
-    public void npcMove(){
-        int[] randomShot;
+    public void npcMove() {
+        int[] npcShot;
         do {
-            randomShot = npcEnemy.randomShot();
-        } while (isCellAlreadyShot((randomShot[0] + "," + randomShot[1]), true));
+            npcShot = npcEnemy.shootAtEnemy();
+        } while (isCellAlreadyShot((npcShot[0] + "," + npcShot[1]), true));
 
-        StackPane cell = GameHandlerController.playerCells[randomShot[0]][randomShot[1]];
-        boolean hit = hitShip(true, randomShot[0], randomShot[1]);
-        GameHandlerController.handleEnemyMove(cell, hit);
+        StackPane cell = GameHandlerController.playerCells[npcShot[0]][npcShot[1]];
+        boolean isHit = hitShip(true, npcShot[0], npcShot[1]);
+
+        if(isHit) {
+            npcEnemy.setLastShotHit(isHit);
+        }
+        GameHandlerController.handleEnemyMove(cell, isHit);
         isHostTurn = true;
-        addShotCell(randomShot[0], randomShot[1], true);
+        addShotCell(npcShot[0], npcShot[1], true);
     }
 
     /**
      * Beendet den Spielerzug und startet ggf. den NPC-Zug.
-     * @throws IOException 
+     * 
+     * @throws IOException
      */
     public void endPlayerMove() {
         isHostTurn = false;
@@ -199,7 +201,7 @@ public class GameHandler {
      *                       werden soll, sonst Gegner.
      * @return True, wenn die Zelle bereits beschossen wurde.
      */
-    public boolean isCellAlreadyShot(String cellKey, boolean targetIsPlayer) {
+    public static boolean isCellAlreadyShot(String cellKey, boolean targetIsPlayer) {
         return targetIsPlayer ? shotPlayerCells.contains(cellKey) : shotEnemyCells.contains(cellKey);
     }
 

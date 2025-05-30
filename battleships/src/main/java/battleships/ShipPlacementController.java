@@ -47,6 +47,10 @@ public class ShipPlacementController {
     @FXML
     private Text errorText;
 
+    @FXML
+    private Text currentDifficulty;
+    public static int difficulty = 1; // Standard-Schwierigkeitsgrad
+
     /** Instanz für statischen Zugriff aus Hilfsmethoden. */
     private static ShipPlacementController currentControllerInstance;
 
@@ -115,6 +119,24 @@ public class ShipPlacementController {
             }
             App.setRoot("PlayingField");
         }
+    }
+
+    @FXML
+    private void onEasy() {
+        currentDifficulty.setText("Easy");
+        difficulty = 1;
+    }
+
+    @FXML
+    private void onMedium() {
+        currentDifficulty.setText("Medium");
+        difficulty = 2;
+    }
+
+    @FXML
+    private void onHard() {
+        currentDifficulty.setText("Hard");
+        difficulty = 3;
     }
 
     /**

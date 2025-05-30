@@ -2,12 +2,26 @@ package battleships.lib;
 
 import java.util.ArrayList;
 
+import battleships.App;
+
+enum Difficulty {
+    EASY,
+    MEDIUM,
+    HARD
+}
+
+
+
 public class Helper {
 
     public static boolean doesShipFit(int cellColOrRow, int ship_size, int grid_size, boolean isVertical) {
         return isVertical
                 ? doesVerticalShipFit(cellColOrRow, ship_size, grid_size)
                 : doesHorizontalShipFit(cellColOrRow, ship_size);
+    }
+
+    public static boolean cellIsInGrid(int cellRow, int cellCol) {
+        return cellRow >= 0 && cellCol < App.GRID_SIZE && cellCol >= 0 && cellCol < App.GRID_SIZE;
     }
 
     private static boolean doesHorizontalShipFit(int cellCol, int ship_size) {

@@ -5,17 +5,13 @@ import java.util.ArrayList;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
+
 
 /**
  * Controller für das Spielfeld während des Spiels.
@@ -133,7 +129,7 @@ public class GameHandlerController {
             if (gameHandler.isHostTurn()) {
                 String cellKey = row + "," + col;
                 // Überprüfen, ob die Zelle bereits beschossen wurde
-                if (gameHandler.isCellAlreadyShot(cellKey, false)) {
+                if (GameHandler.isCellAlreadyShot(cellKey, false)) {
                     System.out.println("Zelle (" + row + ", " + col + ") wurde bereits beschossen!");
                     return;
                 }
