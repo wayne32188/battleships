@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import battleships.lib.NpcEnemy;
+import battleships.lib.enums.Difficulty;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -74,9 +75,12 @@ public class GameHandler {
         ArrayList<Ship> ships = targetIsPlayer ? playerShips : enemyShips;
         for (Ship ship : ships) {
             if (ship.isHit(row, col)) {
-                if (ship.isDestroyed()) {
+                if (ship.hasSunk()) {
                     if (targetIsPlayer) {
                         playerShipsDestroyed++;
+                        if (ShipPlacementController.difficulty == Difficulty.HARD) {
+                            npcEnemy.setShipSunken(ship.getSize(), true);
+                        }
                         if (playerShipsDestroyed == playerShips.size()) {
                             handleGameOver(true);
                         }
@@ -126,7 +130,8 @@ public class GameHandler {
     }
 
     /**
-     * Gibt zurück, ob der Gegner ein NPC ist.     * 
+     * Gibt zurück, ob der Gegner ein NPC ist. *
+     * 
      * @return True, wenn NPC-Gegner.
      */
     public boolean isNpcEnemy() {
@@ -134,7 +139,8 @@ public class GameHandler {
     }
 
     /**
-     * Gibt zurück, ob der Host (Spieler) am Zug ist.     * 
+     * Gibt zurück, ob der Host (Spieler) am Zug ist. *
+     * 
      * @return True, wenn Host am Zug.
      */
     public boolean isHostTurn() {
@@ -156,7 +162,7 @@ public class GameHandler {
         boolean isHit = hitShip(true, npcShot[0], npcShot[1]);
 
         npcEnemy.setLastShotHit(isHit);
-        
+
         GameHandlerController.handleEnemyMove(cell, isHit);
         isHostTurn = true;
         addShotCell(npcShot[0], npcShot[1], true);

@@ -36,7 +36,7 @@ public class Ship {
     private Rectangle shipVisuals;
 
     /** Gibt an, ob das Schiff zerstört wurde. */
-    private boolean isDestroyed = false;
+    private boolean hasSunk = false;
 
     /** Gibt an, ob das Schiff dem Host-Spieler gehört. */
     private boolean isHostShip = false;
@@ -117,8 +117,8 @@ public class Ship {
      * 
      * @return True, wenn zerstört.
      */
-    public boolean isDestroyed() {
-        return isDestroyed;
+    public boolean hasSunk() {
+        return hasSunk;
     }
 
     /**
@@ -169,7 +169,7 @@ public class Ship {
 
                 // Überprüfen, ob das Schiff zerstört ist
                 if (hitCells.size() == SHIP_SIZE) {
-                    isDestroyed = true;
+                    hasSunk = true;
                     System.out.println("Schiff zerstört!");
                 }
 

@@ -7,6 +7,7 @@ import java.util.Random;
 
 import battleships.App;
 import battleships.Ship;
+import battleships.lib.enums.Difficulty;
 
 public class NpcEnemy {
 
@@ -15,16 +16,19 @@ public class NpcEnemy {
     /** Die vom NPC platzierten Schiffe. */
     private ArrayList<Ship> ships;
 
-    int[] sizes = { 3, 4, 5 }; // TODO: Anpassen, falls mehr/andere Schiffe möglich sind
+    ArrayList<Integer> shipSizes = new ArrayList<Integer>();
 
-    public NpcEnemy(int difficulty) {
+    public NpcEnemy(Difficulty difficulty) {
 
+        shipSizes.add(3);
+        shipSizes.add(4);
+        shipSizes.add(5);
         ships = generateRandomShips();
 
         switch (difficulty) {
-            case 1 -> strategy = new EasyStrategy();
-            case 2 -> strategy = new MediumStrategy();
-            case 3 -> strategy = new HardStrategy(); // optional
+            case EASY -> strategy = new EasyStrategy();
+            case MEDIUM -> strategy = new MediumStrategy();
+            case HARD -> strategy = new HardStrategy(shipSizes);
         }
     }
 
@@ -36,14 +40,17 @@ public class NpcEnemy {
         strategy.setLastShotHit(isHit);
     }
 
+    public void setShipSunken(boolean hasSunk, int size) {
+        if (strategy instanceof HardStrategy hardStrategy)
+            hardStrategy.setShipSunken(hasSunk, size);
+    }
+
     private ArrayList<Ship> generateRandomShips() {
         ArrayList<Ship> ships = new ArrayList<>();
         ArrayList<int[]> occupiedCells = new ArrayList<>();
         Random random = new Random();
 
-        
-
-        for (int shipSize : sizes) {
+        for (int shipSize : shipSizes) {
             boolean placed = false;
 
             while (!placed) {

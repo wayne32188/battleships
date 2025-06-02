@@ -6,16 +6,10 @@ import java.util.Set;
 
 import battleships.App;
 import battleships.GameHandler;
+import battleships.lib.enums.Mode;
+import battleships.lib.enums.ShootingDirection;
 
 public class MediumStrategy implements ShootingStrategy {
-
-    private enum Mode {
-        RANDOM, TRACKING
-    }
-
-    private enum ShootingDirection {
-        UP, DOWN, LEFT, RIGHT
-    }
 
     private int[] initialHit = null;
     private int[] lastShot = null;

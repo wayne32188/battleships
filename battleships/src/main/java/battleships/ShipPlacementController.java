@@ -19,6 +19,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import battleships.lib.enums.Difficulty;
+
 
 /**
  * Controller für das Schiffe-platzieren-Fenster.
@@ -49,7 +51,7 @@ public class ShipPlacementController {
 
     @FXML
     private Text currentDifficulty;
-    public static int difficulty = 1; // Standard-Schwierigkeitsgrad
+    public static Difficulty difficulty = Difficulty.EASY; // Standard-Schwierigkeitsgrad
 
     /** Instanz für statischen Zugriff aus Hilfsmethoden. */
     private static ShipPlacementController currentControllerInstance;
@@ -124,19 +126,19 @@ public class ShipPlacementController {
     @FXML
     private void onEasy() {
         currentDifficulty.setText("Easy");
-        difficulty = 1;
+        difficulty = Difficulty.EASY;
     }
 
     @FXML
     private void onMedium() {
         currentDifficulty.setText("Medium");
-        difficulty = 2;
+        difficulty = Difficulty.MEDIUM;
     }
 
     @FXML
     private void onHard() {
         currentDifficulty.setText("Hard");
-        difficulty = 3;
+        difficulty = Difficulty.HARD;
     }
 
     /**

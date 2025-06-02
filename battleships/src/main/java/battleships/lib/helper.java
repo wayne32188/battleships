@@ -4,13 +4,6 @@ import java.util.ArrayList;
 
 import battleships.App;
 
-enum Difficulty {
-    EASY,
-    MEDIUM,
-    HARD
-}
-
-
 
 public class Helper {
 
