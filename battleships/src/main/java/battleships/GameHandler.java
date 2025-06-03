@@ -31,7 +31,7 @@ public class GameHandler {
     private ArrayList<Ship> playerShips = new ArrayList<>();
 
     /** Set mit allen bereits beschossenen Zellen (Format: "row,col"). */
-    private static final Set<String> shotPlayerCells = new HashSet<>();
+    public static final Set<String> shotPlayerCells = new HashSet<>();
     private static final Set<String> shotEnemyCells = new HashSet<>();
 
     /** Zähler für zerstörte Schiffe des Spielers. */
@@ -79,7 +79,7 @@ public class GameHandler {
                     if (targetIsPlayer) {
                         playerShipsDestroyed++;
                         if (ShipPlacementController.difficulty == Difficulty.HARD) {
-                            npcEnemy.setShipSunken(ship.getSize(), true);
+                            npcEnemy.setShipSunken(true, ship.getSize());
                         }
                         if (playerShipsDestroyed == playerShips.size()) {
                             handleGameOver(true);

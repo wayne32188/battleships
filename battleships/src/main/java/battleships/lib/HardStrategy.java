@@ -23,6 +23,10 @@ public class HardStrategy implements ShootingStrategy {
     private ArrayList<Integer> shipSizes;
     private final Random random = new Random();
 
+    private int trackingHitCount = 0;
+    private ShootingDirection confirmedDirection = null;
+    private boolean triedOppositeDirection = false;
+
     public HardStrategy(ArrayList<Integer> shipSizes) {
         this.shipSizes = shipSizes;
     }
@@ -35,17 +39,32 @@ public class HardStrategy implements ShootingStrategy {
                 mode = Mode.TRACKING;
                 initialHit = lastShot;
                 currentDirection = ShootingDirection.UP;
-                setShipSunken(false);
                 triedDirections.clear();
+                trackingHitCount = 1; // erster Treffer
+                triedOppositeDirection = false;
+            } else {
+                trackingHitCount++;
+                if (trackingHitCount == 2) {
+                    confirmedDirection = currentDirection;
+                }
             }
-            // Im TRACKING-Modus: Richtung beibehalten, lastShot bleibt erhalten
+            setShipSunken(false);
         } else {
             if (mode == Mode.TRACKING) {
-                triedDirections.add(currentDirection);
-                if (triedDirections.size() == 4) {
-                    resetTracking();
+                if (confirmedDirection != null && !triedOppositeDirection) {
+                    // Wir haben eine bestätigte Richtung, aber keinen Treffer -> Gegenseite
+                    // probieren
+                    currentDirection = getOppositeDirection(confirmedDirection);
+                    triedOppositeDirection = true;
+                    lastShot = initialHit; // Zurück zum Startpunkt
                 } else {
-                    currentDirection = getNextUntestedDirection();
+                    triedDirections.add(currentDirection);
+                    if (triedDirections.size() == 4) {
+                        resetTracking();
+                    } else {
+                        currentDirection = getNextUntestedDirection();
+                        lastShot = initialHit;
+                    }
                 }
             }
         }
@@ -53,7 +72,7 @@ public class HardStrategy implements ShootingStrategy {
         // Schuss generieren
         int[] newShot;
         if (mode == Mode.RANDOM) {
-            newShot = getRandomShot(targetIsPlayer);
+            newShot = getInformedShot(targetIsPlayer);
         } else {
             newShot = getNextDirectionalShot(targetIsPlayer);
         }
@@ -70,7 +89,7 @@ public class HardStrategy implements ShootingStrategy {
         // Versuche, in der aktuellen Richtung von lastShot aus zu schießen
         int[] nextCell = getNextCellInDirection(lastShot, currentDirection);
         if (Helper.cellIsInGrid(nextCell[0], nextCell[1])
-                && !GameHandler.isCellAlreadyShot(getCellKey(nextCell), targetIsPlayer)) {
+                && !GameHandler.isCellAlreadyShot(buildCellKey(nextCell), targetIsPlayer)) {
             return nextCell;
         } else {
             // Richtung ist blockiert oder schon beschossen, also nächste Richtung von
@@ -87,7 +106,7 @@ public class HardStrategy implements ShootingStrategy {
                 nextCell = getNextCellInDirection(initialHit, currentDirection);
 
                 if (Helper.cellIsInGrid(nextCell[0], nextCell[1])
-                        && !GameHandler.isCellAlreadyShot(getCellKey(nextCell), targetIsPlayer)) {
+                        && !GameHandler.isCellAlreadyShot(buildCellKey(nextCell), targetIsPlayer)) {
                     lastShot = initialHit; // Von initialHit aus in neuer Richtung starten
                     return nextCell;
                 } else {
@@ -105,6 +124,9 @@ public class HardStrategy implements ShootingStrategy {
         mode = Mode.RANDOM;
         triedDirections.clear();
         currentDirection = null;
+        confirmedDirection = null;
+        trackingHitCount = 0;
+        triedOppositeDirection = false;
     }
 
     private ShootingDirection getNextUntestedDirection() {
@@ -114,6 +136,15 @@ public class HardStrategy implements ShootingStrategy {
             }
         }
         return ShootingDirection.UP; // Fallback
+    }
+
+    private ShootingDirection getOppositeDirection(ShootingDirection direction) {
+        return switch (direction) {
+            case UP -> ShootingDirection.DOWN;
+            case DOWN -> ShootingDirection.UP;
+            case LEFT -> ShootingDirection.RIGHT;
+            case RIGHT -> ShootingDirection.LEFT;
+        };
     }
 
     private int[] getNextCellInDirection(int[] origin, ShootingDirection direction) {
@@ -127,7 +158,12 @@ public class HardStrategy implements ShootingStrategy {
         };
     }
 
-    private String getCellKey(int[] pos) {
+    /**
+     * 
+     * Erstellt einen Key einer Position, der passend zu den Elementen in
+     * shotPlayerCells oder shotEnemyCells
+     */
+    private String buildCellKey(int[] pos) {
         return pos[0] + "," + pos[1];
     }
 
@@ -149,7 +185,7 @@ public class HardStrategy implements ShootingStrategy {
     /**
      * 
      * @param hasShipSunk Wurde das letzte Schiff versenkt
-     * @param shipSize 
+     * @param shipSize
      */
     public void setShipSunken(boolean hasShipSunk, int shipSize) {
         setShipSunken(hasShipSunk);
@@ -158,6 +194,7 @@ public class HardStrategy implements ShootingStrategy {
 
     /**
      * Entfernt kein Schiff aus shipSizes
+     * 
      * @param hasShipSunk Wurde das letzte Schiff versenkt
      */
     private void setShipSunken(boolean hasShipSunk) {
@@ -167,4 +204,53 @@ public class HardStrategy implements ShootingStrategy {
     private void removeShip(int shipSize) {
         shipSizes.remove(Integer.valueOf(shipSize));
     }
+
+    private int[] getInformedShot(boolean targetIsPlayer) {
+        int biggestShip = shipSizes.stream().max(Integer::compareTo).orElse(0);
+
+        for (int row = 0; row < App.GRID_SIZE; row++) {
+            for (int col = 0; col < App.GRID_SIZE; col++) {
+                // Horizontal prüfen
+                if (fitsHorizontally(row, col, biggestShip, targetIsPlayer)) {
+                    return new int[] { row, col + biggestShip / 2 }; // Mitte des Bereichs
+                }
+                // Vertikal prüfen
+                if (fitsVertically(row, col, biggestShip, targetIsPlayer)) {
+                    return new int[] { row + biggestShip / 2, col }; // Mitte des Bereichs
+                }
+            }
+        }
+
+        // Falls nichts passt, fallback
+        return getRandomShot(targetIsPlayer);
+    }
+
+    private boolean fitsHorizontally(int row, int col, int length, boolean targetIsPlayer) {
+        if (col + length > App.GRID_SIZE)
+            return false;
+
+        for (int i = 0; i < length; i++) {
+            String cellKey = buildCellKey(new int[] { row, col + i });
+            if (GameHandler.isCellAlreadyShot(cellKey, targetIsPlayer)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean fitsVertically(int row, int col, int length, boolean targetIsPlayer) {
+        if (row + length > App.GRID_SIZE)
+            return false;
+
+        for (int i = 0; i < length; i++) {
+            String key = (row + i) + "," + col;
+            if (GameHandler.isCellAlreadyShot(key, targetIsPlayer)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

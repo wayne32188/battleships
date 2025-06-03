@@ -40,9 +40,9 @@ public class NpcEnemy {
         strategy.setLastShotHit(isHit);
     }
 
-    public void setShipSunken(boolean hasSunk, int size) {
+    public void setShipSunken(boolean hasSunk, int shipSize) {
         if (strategy instanceof HardStrategy hardStrategy)
-            hardStrategy.setShipSunken(hasSunk, size);
+            hardStrategy.setShipSunken(hasSunk, shipSize);
     }
 
     private ArrayList<Ship> generateRandomShips() {

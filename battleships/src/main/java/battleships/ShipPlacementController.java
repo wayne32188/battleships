@@ -21,7 +21,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import battleships.lib.enums.Difficulty;
 
-
 /**
  * Controller für das Schiffe-platzieren-Fenster.
  * Verwaltet die Anzeige, Drag&Drop und Validierung der Schiffsplatzierung.
@@ -77,6 +76,7 @@ public class ShipPlacementController {
     @FXML
     public void initialize() {
         currentControllerInstance = this;
+        currentDifficulty.setText("Easy");
 
         // Erstelle zwei GridPane-Instanzen für Spieler und Gegner
         playerField.getChildren().setAll(createPlayerField().getChildren());
