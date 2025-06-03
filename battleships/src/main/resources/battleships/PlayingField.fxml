@@ -22,8 +22,8 @@
         </VBox>
     </HBox>
     <Separator/>
-    <HBox spacing="20" alignment="CENTER" style="-fx-padding: 10 0 10 0;">
-        <Button text="Spezialangriff" onAction="#buttonHandler" style="-fx-font-size: 14px;"/>
+    <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10 0 10 0;">
+        <Button text="Neustart" onAction="#buttonHandler" style="-fx-font-size: 14px;"/>
     </HBox>
     <Text fx:id="winnerText" />
 </VBox>

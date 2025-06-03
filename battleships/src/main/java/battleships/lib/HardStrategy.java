@@ -185,7 +185,7 @@ public class HardStrategy implements ShootingStrategy {
     /**
      * 
      * @param hasShipSunk Wurde das letzte Schiff versenkt
-     * @param shipSize
+     * @param shipSize    Wie groß ist das zu entfernende Schiff
      */
     public void setShipSunken(boolean hasShipSunk, int shipSize) {
         setShipSunken(hasShipSunk);

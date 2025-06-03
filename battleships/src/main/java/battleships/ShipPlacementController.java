@@ -50,7 +50,7 @@ public class ShipPlacementController {
 
     @FXML
     private Text currentDifficulty;
-    public static Difficulty difficulty = Difficulty.EASY; // Standard-Schwierigkeitsgrad
+    public static Difficulty difficulty; // Standard-Schwierigkeitsgrad
 
     /** Instanz für statischen Zugriff aus Hilfsmethoden. */
     private static ShipPlacementController currentControllerInstance;
@@ -68,13 +68,20 @@ public class ShipPlacementController {
     private static final Dotenv dotenv = Dotenv.load();
 
     /** Gibt an, ob das aktuell platzierte Schiff vertikal ist. */
-    public static boolean isVertical = false;
+    public static boolean isVertical;
 
     /**
      * Initialisiert das Fenster, erzeugt Schiffe und setzt Infotexte.
      */
     @FXML
     public void initialize() {
+
+        // Reset statischer Variablen um sicherzustellen, dass der Controller frisch startet
+        ships.clear();
+        occupiedCells.clear();
+        isVertical = false;
+        difficulty = Difficulty.EASY;
+
         currentControllerInstance = this;
         currentDifficulty.setText("Easy");
 
